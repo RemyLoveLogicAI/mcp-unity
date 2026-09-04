@@ -85,6 +85,21 @@ The following tools are available for manipulating and querying Unity scenes and
 - `add_asset_to_scene`: Adds an asset from the AssetDatabase to the Unity scene
   > **Example prompt:** "Add the Player prefab from my project to the current scene"
 
+- `create_scene`: Creates a new empty scene with default GameObjects and saves it to a given Assets path
+  > **Example prompt:** "Create a new scene at Assets/Scenes/Level2.unity"
+
+- `open_scene`: Opens a scene by path, replacing or adding to the currently loaded scenes
+  > **Example prompt:** "Open the MainMenu scene"
+
+- `save_scene`: Saves the active scene (optionally to a new path), or all open scenes at once
+  > **Example prompt:** "Save the current scene"
+
+- `set_active_scene`: Sets which currently loaded scene is the active scene
+  > **Example prompt:** "Make the Lighting scene the active scene"
+
+- `unload_scene`: Closes/unloads a currently loaded scene by path
+  > **Example prompt:** "Unload the Lighting scene"
+
 ### MCP Server Resources
 
 - `unity://menu-items`: Retrieves a list of all available menu items in the Unity Editor to facilitate `execute_menu_item` tool
@@ -107,6 +122,9 @@ The following tools are available for manipulating and querying Unity scenes and
 
 - `unity://tests/{testMode}`: Retrieves information about tests in the Unity Test Runner
   > **Example prompt:** "List all available tests in my Unity project"
+
+- `unity://scenes`: Retrieves the list of currently loaded scenes, including which one is active
+  > **Example prompt:** "What scenes are currently open?"
 
 ## Requirements
 - Unity 2022.3 or later - to [install the server](#install-server)
