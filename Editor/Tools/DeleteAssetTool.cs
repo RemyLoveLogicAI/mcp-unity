@@ -63,7 +63,7 @@ namespace McpUnity.Tools
                 }
             }
 
-            McpLogger.LogInfo($"[MCP Unity] Deleted {deleted.Count} asset(s), {failed.Count} failed");
+            McpLogger.LogInfo($"Deleted {deleted.Count} asset(s), {failed.Count} failed");
 
             return new JObject
             {

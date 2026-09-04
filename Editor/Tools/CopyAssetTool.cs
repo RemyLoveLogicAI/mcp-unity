@@ -57,7 +57,7 @@ namespace McpUnity.Tools
                 );
             }
 
-            McpLogger.LogInfo($"[MCP Unity] Copied asset '{sourcePath}' to '{destinationPath}'");
+            McpLogger.LogInfo($"Copied asset '{sourcePath}' to '{destinationPath}'");
 
             return new JObject
             {

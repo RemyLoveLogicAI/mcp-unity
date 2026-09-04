@@ -59,7 +59,7 @@ namespace McpUnity.Tools
                 );
             }
 
-            McpLogger.LogInfo($"[MCP Unity] Moved asset '{sourcePath}' to '{destinationPath}'");
+            McpLogger.LogInfo($"Moved asset '{sourcePath}' to '{destinationPath}'");
 
             return new JObject
             {

@@ -67,7 +67,7 @@ namespace McpUnity.Tools
                 );
             }
 
-            McpLogger.LogInfo($"[MCP Unity] Created folder '{newFolderPath}'");
+            McpLogger.LogInfo($"Created folder '{newFolderPath}'");
 
             return new JObject
             {
