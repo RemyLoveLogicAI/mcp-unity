@@ -59,10 +59,15 @@ namespace McpUnity.Tools
                 );
             }
 
-            // Preserve the prefab connection when duplicating a prefab instance, matching AddAssetToSceneTool's approach
+            // Preserve the prefab connection when duplicating a prefab instance, matching AddAssetToSceneTool's
+            // approach - but only for the outermost root of the prefab instance. PrefabUtility.InstantiatePrefab
+            // always instantiates the prefab asset's root, so calling it with a non-root member's corresponding
+            // object would incorrectly create a whole new prefab instance instead of duplicating just that member.
+            // Non-root members fall back to a plain Object.Instantiate below.
             GameObject duplicatedGameObject;
+            bool isPrefabInstanceRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(sourceGameObject) == sourceGameObject;
             PrefabAssetType prefabType = PrefabUtility.GetPrefabAssetType(sourceGameObject);
-            Object prefabSource = prefabType != PrefabAssetType.NotAPrefab
+            Object prefabSource = isPrefabInstanceRoot && prefabType != PrefabAssetType.NotAPrefab
                 ? PrefabUtility.GetCorrespondingObjectFromSource(sourceGameObject)
                 : null;
             if (prefabSource != null)
