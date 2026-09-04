@@ -38,13 +38,24 @@ namespace McpUnity.Tools
 
             GameObject sourceGameObject = instanceId.HasValue
                 ? EditorUtility.InstanceIDToObject(instanceId.Value) as GameObject
-                : GameObject.Find(objectPath);
+                : GameObjectPathResolver.FindByPath(objectPath);
 
             if (sourceGameObject == null)
             {
                 return McpUnitySocketHandler.CreateErrorResponse(
                     $"GameObject not found" + (instanceId.HasValue ? $" with instance ID: {instanceId.Value}" : $": {objectPath}"),
                     "not_found_error"
+                );
+            }
+
+            // Refuse to duplicate persistent project assets (e.g. a prefab asset's own instance ID) -
+            // this tool only operates on scene objects.
+            if (EditorUtility.IsPersistent(sourceGameObject))
+            {
+                return McpUnitySocketHandler.CreateErrorResponse(
+                    $"Cannot duplicate '{sourceGameObject.name}': it is a persistent project asset, not a scene object. " +
+                    "Use 'add_asset_to_scene' to instantiate a prefab asset into the scene instead.",
+                    "validation_error"
                 );
             }
 
@@ -59,6 +70,17 @@ namespace McpUnity.Tools
                 duplicatedGameObject.transform.localPosition = sourceGameObject.transform.localPosition;
                 duplicatedGameObject.transform.localRotation = sourceGameObject.transform.localRotation;
                 duplicatedGameObject.transform.localScale = sourceGameObject.transform.localScale;
+
+                // Carry over the source instance's property overrides (e.g. modified serialized field
+                // values) so the duplicate isn't silently reset to the prefab's default state. This does
+                // NOT cover structural overrides (added/removed components, added/removed child objects,
+                // or nested-prefab-specific overrides) - those would need PrefabUtility.GetObjectOverrides /
+                // GetAddedComponents / GetAddedGameObjects, which is a larger change left for a follow-up.
+                PropertyModification[] overrides = PrefabUtility.GetPropertyModifications(sourceGameObject);
+                if (overrides != null && overrides.Length > 0)
+                {
+                    PrefabUtility.SetPropertyModifications(duplicatedGameObject, overrides);
+                }
             }
             else
             {

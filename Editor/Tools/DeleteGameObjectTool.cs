@@ -37,13 +37,24 @@ namespace McpUnity.Tools
 
             GameObject targetGameObject = instanceId.HasValue
                 ? EditorUtility.InstanceIDToObject(instanceId.Value) as GameObject
-                : GameObject.Find(objectPath);
+                : GameObjectPathResolver.FindByPath(objectPath);
 
             if (targetGameObject == null)
             {
                 return McpUnitySocketHandler.CreateErrorResponse(
                     $"GameObject not found" + (instanceId.HasValue ? $" with instance ID: {instanceId.Value}" : $": {objectPath}"),
                     "not_found_error"
+                );
+            }
+
+            // Refuse to delete persistent project assets (e.g. a prefab asset's instance ID) -
+            // this tool only operates on scene objects, never files on disk.
+            if (EditorUtility.IsPersistent(targetGameObject))
+            {
+                return McpUnitySocketHandler.CreateErrorResponse(
+                    $"Cannot delete '{targetGameObject.name}': it is a persistent project asset, not a scene object. " +
+                    "Delete assets via the Project window instead.",
+                    "validation_error"
                 );
             }
 

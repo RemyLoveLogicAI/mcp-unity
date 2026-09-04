@@ -16,7 +16,10 @@ namespace McpUnity.Tools
             Description = "Controls the Unity Editor's play mode state (play, pause, resume, or stop). " +
                 "Play/stop transitions are asynchronous in Unity, so the isPlaying/isPaused values in the " +
                 "response reflect the transition as requested and may not be fully applied yet; " +
-                "poll the unity://editor-state resource to confirm the observed state.";
+                "poll the unity://editor-state resource to confirm the observed state. " +
+                "The MCP bridge briefly disconnects and reconnects around each play/edit transition " +
+                "(a domain reload may occur), so a 'play' call - or the first call right after one - may " +
+                "time out even though the transition succeeded; retry once if that happens.";
         }
 
         /// <summary>
