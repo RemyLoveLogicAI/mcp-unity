@@ -85,6 +85,7 @@ The following tools are available for manipulating and querying Unity scenes and
 - `add_asset_to_scene`: Adds an asset from the AssetDatabase to the Unity scene
   > **Example prompt:** "Add the Player prefab from my project to the current scene"
 
+<<<<<<< HEAD
 - `create_scene`: Creates a new empty scene with default GameObjects and saves it to a given Assets path
   > **Example prompt:** "Create a new scene at Assets/Scenes/Level2.unity"
 - `open_scene`: Opens a scene by path, replacing or adding to the currently loaded scenes
@@ -110,6 +111,22 @@ The following tools are available for manipulating and querying Unity scenes and
 
 - `clear_console`: Clears the Unity Editor console and the MCP server's captured log history
   > **Example prompt:** "Clear the Unity console"
+=======
+- `copy_asset`: Copies an asset from one path to another in the project
+  > **Example prompt:** "Copy the Red material to a new file called Blue"
+
+- `move_asset`: Moves or renames an asset from one path to another
+  > **Example prompt:** "Rename Assets/Materials/Red.mat to Crimson.mat"
+
+- `delete_asset`: Deletes one or more assets by path (moves them to the OS trash, not permanent deletion)
+  > **Example prompt:** "Delete the unused OldEnemy material"
+
+- `create_asset_folder`: Creates a new folder at a given parent path
+  > **Example prompt:** "Create a new folder called Materials under Assets"
+
+- `create_material`: Creates a new material asset with a given shader
+  > **Example prompt:** "Create a new material called Crimson using the Standard shader"
+>>>>>>> 3c14e04 (feat: add asset management tools (copy/move/delete/create-folder/create-material))
 
 ### MCP Server Resources
 
