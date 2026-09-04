@@ -249,6 +249,14 @@ namespace McpUnity.Unity
             // Register AddAssetToSceneTool
             AddAssetToSceneTool addAssetToSceneTool = new AddAssetToSceneTool();
             _tools.Add(addAssetToSceneTool.Name, addAssetToSceneTool);
+
+            // Register DestroyComponentTool
+            DestroyComponentTool destroyComponentTool = new DestroyComponentTool();
+            _tools.Add(destroyComponentTool.Name, destroyComponentTool);
+
+            // Register SetGameObjectParentTool
+            SetGameObjectParentTool setGameObjectParentTool = new SetGameObjectParentTool();
+            _tools.Add(setGameObjectParentTool.Name, setGameObjectParentTool);
         }
         
         /// <summary>
@@ -283,6 +291,10 @@ namespace McpUnity.Unity
             // Register GetGameObjectResource
             GetGameObjectResource getGameObjectResource = new GetGameObjectResource();
             _resources.Add(getGameObjectResource.Name, getGameObjectResource);
+
+            // Register GetComponentTypesResource
+            GetComponentTypesResource getComponentTypesResource = new GetComponentTypesResource();
+            _resources.Add(getComponentTypesResource.Name, getComponentTypesResource);
         }
         
         /// <summary>
