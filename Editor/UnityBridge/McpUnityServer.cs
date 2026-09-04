@@ -22,7 +22,12 @@ namespace McpUnity.Unity
     public class McpUnityServer : IDisposable
     {
         private static McpUnityServer _instance;
-        
+
+        // Persisted via SessionState (not a plain static field) because entering/exiting Play Mode can
+        // trigger a domain reload, which resets static fields before EnteredPlayMode/EnteredEditMode fires.
+        // SessionState survives a domain reload for the rest of the Editor session.
+        private const string WasListeningBeforePlayModeTransitionKey = "McpUnity.WasListeningBeforePlayModeTransition";
+
         private readonly Dictionary<string, McpToolBase> _tools = new Dictionary<string, McpToolBase>();
         private readonly Dictionary<string, McpResourceBase> _resources = new Dictionary<string, McpResourceBase>();
         
@@ -249,6 +254,18 @@ namespace McpUnity.Unity
             // Register AddAssetToSceneTool
             AddAssetToSceneTool addAssetToSceneTool = new AddAssetToSceneTool();
             _tools.Add(addAssetToSceneTool.Name, addAssetToSceneTool);
+
+            // Register DeleteGameObjectTool
+            DeleteGameObjectTool deleteGameObjectTool = new DeleteGameObjectTool();
+            _tools.Add(deleteGameObjectTool.Name, deleteGameObjectTool);
+
+            // Register DuplicateGameObjectTool
+            DuplicateGameObjectTool duplicateGameObjectTool = new DuplicateGameObjectTool();
+            _tools.Add(duplicateGameObjectTool.Name, duplicateGameObjectTool);
+
+            // Register SetEditorStateTool
+            SetEditorStateTool setEditorStateTool = new SetEditorStateTool();
+            _tools.Add(setEditorStateTool.Name, setEditorStateTool);
         }
         
         /// <summary>
@@ -283,6 +300,10 @@ namespace McpUnity.Unity
             // Register GetGameObjectResource
             GetGameObjectResource getGameObjectResource = new GetGameObjectResource();
             _resources.Add(getGameObjectResource.Name, getGameObjectResource);
+
+            // Register GetEditorStateResource
+            GetEditorStateResource getEditorStateResource = new GetEditorStateResource();
+            _resources.Add(getEditorStateResource.Name, getEditorStateResource);
         }
         
         /// <summary>
@@ -333,7 +354,13 @@ namespace McpUnity.Unity
 
         /// <summary>
         /// Handles changes in Unity Editor's play mode state.
-        /// Stops the server when exiting Edit Mode if configured, and restarts it when entering Play Mode or returning to Edit Mode if auto-start is enabled.
+        /// Stops the server around each play/edit mode transition (a domain reload may occur as part of
+        /// that transition) and restarts it once the new mode is fully entered, so the bridge - including
+        /// tools like set_editor_state and the unity://editor-state resource - stays reachable while the
+        /// Editor is in Play Mode, not just in Edit Mode. Restarting is driven by AutoStartServer OR by
+        /// whether the server was actually listening right before the transition, so a server started
+        /// manually (with AutoStartServer disabled) comes back after the transition instead of staying
+        /// down for the rest of the session.
         /// </summary>
         /// <param name="state">The current play mode state change.</param>
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
@@ -341,19 +368,20 @@ namespace McpUnity.Unity
             switch (state)
             {
                 case PlayModeStateChange.ExitingEditMode:
-                    // About to enter Play Mode
+                case PlayModeStateChange.ExitingPlayMode:
+                    // About to transition play modes
+                    SessionState.SetBool(WasListeningBeforePlayModeTransitionKey, Instance.IsListening);
                     if (Instance.IsListening)
                     {
                         Instance.StopServer();
                     }
                     break;
                 case PlayModeStateChange.EnteredPlayMode:
-                case PlayModeStateChange.ExitingPlayMode:
-                    // Server is disabled during play mode as domain reload will be triggered again when stopped.
-                    break;
                 case PlayModeStateChange.EnteredEditMode:
-                    // Returned to Edit Mode
-                    if (!Instance.IsListening && McpUnitySettings.Instance.AutoStartServer)
+                    // Settled into the new mode (play or edit)
+                    if (!Instance.IsListening &&
+                        (McpUnitySettings.Instance.AutoStartServer ||
+                         SessionState.GetBool(WasListeningBeforePlayModeTransitionKey, false)))
                     {
                         Instance.StartServer();
                     }

@@ -85,6 +85,16 @@ The following tools are available for manipulating and querying Unity scenes and
 - `add_asset_to_scene`: Adds an asset from the AssetDatabase to the Unity scene
   > **Example prompt:** "Add the Player prefab from my project to the current scene"
 
+- `delete_gameobject`: Deletes a GameObject (and its children) from the scene by path or instance ID
+  > **Example prompt:** "Delete the OldEnemy GameObject from the scene"
+
+- `duplicate_gameobject`: Duplicates a GameObject (and its children) in the scene by path or instance ID
+  > **Example prompt:** "Duplicate the Enemy GameObject and name the copy Enemy_2"
+
+- `set_editor_state`: Controls the Unity Editor's play mode state (play, pause, resume, or stop)
+  > **Note:** Play and stop transitions are asynchronous - read `unity://editor-state` to confirm the observed state before dependent actions.
+  > **Example prompt:** "Enter play mode so I can test the level"
+
 ### MCP Server Resources
 
 - `unity://menu-items`: Retrieves a list of all available menu items in the Unity Editor to facilitate `execute_menu_item` tool
@@ -107,6 +117,9 @@ The following tools are available for manipulating and querying Unity scenes and
 
 - `unity://tests/{testMode}`: Retrieves information about tests in the Unity Test Runner
   > **Example prompt:** "List all available tests in my Unity project"
+
+- `unity://editor-state`: Retrieves the current state of the Unity Editor (play mode, paused, compiling)
+  > **Example prompt:** "Is the Unity Editor currently in play mode?"
 
 ## Requirements
 - Unity 2022.3 or later - to [install the server](#install-server)
