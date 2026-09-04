@@ -349,7 +349,10 @@ namespace McpUnity.Unity
 
         /// <summary>
         /// Handles changes in Unity Editor's play mode state.
-        /// Stops the server when exiting Edit Mode if configured, and restarts it when entering Play Mode or returning to Edit Mode if auto-start is enabled.
+        /// Stops the server around each play/edit mode transition (a domain reload may occur as part of
+        /// that transition) and restarts it once the new mode is fully entered, so the bridge - including
+        /// tools like set_editor_state and the unity://editor-state resource - stays reachable while the
+        /// Editor is in Play Mode, not just in Edit Mode.
         /// </summary>
         /// <param name="state">The current play mode state change.</param>
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
@@ -357,18 +360,16 @@ namespace McpUnity.Unity
             switch (state)
             {
                 case PlayModeStateChange.ExitingEditMode:
-                    // About to enter Play Mode
+                case PlayModeStateChange.ExitingPlayMode:
+                    // About to transition play modes
                     if (Instance.IsListening)
                     {
                         Instance.StopServer();
                     }
                     break;
                 case PlayModeStateChange.EnteredPlayMode:
-                case PlayModeStateChange.ExitingPlayMode:
-                    // Server is disabled during play mode as domain reload will be triggered again when stopped.
-                    break;
                 case PlayModeStateChange.EnteredEditMode:
-                    // Returned to Edit Mode
+                    // Settled into the new mode (play or edit)
                     if (!Instance.IsListening && McpUnitySettings.Instance.AutoStartServer)
                     {
                         Instance.StartServer();
