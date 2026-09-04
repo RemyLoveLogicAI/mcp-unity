@@ -68,10 +68,14 @@ async function toolHandler(mcpUnity: McpUnity, params: any): Promise<CallToolRes
     );
   }
 
+  const stateText = response.isPlaying !== undefined
+    ? ` (isPlaying: ${response.isPlaying}, isPaused: ${response.isPaused}, isCompiling: ${response.isCompiling})`
+    : '';
+
   return {
     content: [{
       type: response.type,
-      text: response.message || `Successfully set editor state`
+      text: (response.message || `Successfully set editor state`) + stateText
     }]
   };
 }

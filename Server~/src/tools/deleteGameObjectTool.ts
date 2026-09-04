@@ -53,7 +53,8 @@ export function registerDeleteGameObjectTool(server: McpServer, mcpUnity: McpUni
  */
 async function toolHandler(mcpUnity: McpUnity, params: any): Promise<CallToolResult> {
   // Custom validation since we can't use refine/superRefine while maintaining ZodObject type
-  if (params.objectPath === undefined && params.instanceId === undefined) {
+  if ((params.instanceId === undefined || params.instanceId === null) &&
+      (!params.objectPath || params.objectPath.trim() === '')) {
     throw new McpUnityError(
       ErrorType.VALIDATION,
       "Either 'objectPath' or 'instanceId' must be provided"
@@ -75,7 +76,9 @@ async function toolHandler(mcpUnity: McpUnity, params: any): Promise<CallToolRes
   return {
     content: [{
       type: response.type,
-      text: response.message || `Successfully deleted GameObject`
+      text: response.instanceId !== undefined
+        ? `${response.message || 'Successfully deleted GameObject'} (instance ID: ${response.instanceId})`
+        : response.message || `Successfully deleted GameObject`
     }]
   };
 }
