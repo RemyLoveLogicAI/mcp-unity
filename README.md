@@ -92,6 +92,7 @@ The following tools are available for manipulating and querying Unity scenes and
   > **Example prompt:** "Duplicate the Enemy GameObject and name the copy Enemy_2"
 
 - `set_editor_state`: Controls the Unity Editor's play mode state (play, pause, resume, or stop)
+  > **Note:** Play and stop transitions are asynchronous - read `unity://editor-state` to confirm the observed state before dependent actions.
   > **Example prompt:** "Enter play mode so I can test the level"
 
 ### MCP Server Resources

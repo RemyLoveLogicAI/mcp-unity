@@ -22,7 +22,8 @@ namespace McpUnity.Unity
     public class McpUnityServer : IDisposable
     {
         private static McpUnityServer _instance;
-        
+        private static bool _wasListeningBeforePlayModeTransition;
+
         private readonly Dictionary<string, McpToolBase> _tools = new Dictionary<string, McpToolBase>();
         private readonly Dictionary<string, McpResourceBase> _resources = new Dictionary<string, McpResourceBase>();
         
@@ -352,7 +353,10 @@ namespace McpUnity.Unity
         /// Stops the server around each play/edit mode transition (a domain reload may occur as part of
         /// that transition) and restarts it once the new mode is fully entered, so the bridge - including
         /// tools like set_editor_state and the unity://editor-state resource - stays reachable while the
-        /// Editor is in Play Mode, not just in Edit Mode.
+        /// Editor is in Play Mode, not just in Edit Mode. Restarting is driven by AutoStartServer OR by
+        /// whether the server was actually listening right before the transition, so a server started
+        /// manually (with AutoStartServer disabled) comes back after the transition instead of staying
+        /// down for the rest of the session.
         /// </summary>
         /// <param name="state">The current play mode state change.</param>
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
@@ -362,6 +366,7 @@ namespace McpUnity.Unity
                 case PlayModeStateChange.ExitingEditMode:
                 case PlayModeStateChange.ExitingPlayMode:
                     // About to transition play modes
+                    _wasListeningBeforePlayModeTransition = Instance.IsListening;
                     if (Instance.IsListening)
                     {
                         Instance.StopServer();
@@ -370,7 +375,8 @@ namespace McpUnity.Unity
                 case PlayModeStateChange.EnteredPlayMode:
                 case PlayModeStateChange.EnteredEditMode:
                     // Settled into the new mode (play or edit)
-                    if (!Instance.IsListening && McpUnitySettings.Instance.AutoStartServer)
+                    if (!Instance.IsListening &&
+                        (McpUnitySettings.Instance.AutoStartServer || _wasListeningBeforePlayModeTransition))
                     {
                         Instance.StartServer();
                     }
