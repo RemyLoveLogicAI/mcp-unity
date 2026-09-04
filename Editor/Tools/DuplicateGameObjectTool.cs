@@ -48,7 +48,23 @@ namespace McpUnity.Tools
                 );
             }
 
-            GameObject duplicatedGameObject = Object.Instantiate(sourceGameObject, sourceGameObject.transform.parent);
+            // Preserve the prefab connection when duplicating a prefab instance, matching AddAssetToSceneTool's approach
+            GameObject duplicatedGameObject;
+            PrefabAssetType prefabType = PrefabUtility.GetPrefabAssetType(sourceGameObject);
+            if (prefabType != PrefabAssetType.NotAPrefab)
+            {
+                Object prefabSource = PrefabUtility.GetCorrespondingObjectFromSource(sourceGameObject);
+                duplicatedGameObject = (GameObject)PrefabUtility.InstantiatePrefab(prefabSource, sourceGameObject.transform.parent);
+                duplicatedGameObject.transform.SetSiblingIndex(sourceGameObject.transform.GetSiblingIndex() + 1);
+                duplicatedGameObject.transform.localPosition = sourceGameObject.transform.localPosition;
+                duplicatedGameObject.transform.localRotation = sourceGameObject.transform.localRotation;
+                duplicatedGameObject.transform.localScale = sourceGameObject.transform.localScale;
+            }
+            else
+            {
+                duplicatedGameObject = Object.Instantiate(sourceGameObject, sourceGameObject.transform.parent);
+            }
+
             duplicatedGameObject.name = !string.IsNullOrEmpty(newName)
                 ? newName
                 : GameObjectUtility.GetUniqueNameForSibling(sourceGameObject.transform.parent, sourceGameObject.name);
