@@ -10,6 +10,11 @@ namespace McpUnity.Utils
     /// </summary>
     public static class GameObjectPathResolver
     {
+        /// <summary>
+        /// Finds a GameObject by its hierarchy path, including inactive objects.
+        /// </summary>
+        /// <param name="path">Slash-separated hierarchy path (e.g. "Parent/Child")</param>
+        /// <returns>The matching GameObject, or null if no object exists at that path</returns>
         public static GameObject FindByPath(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -34,6 +39,11 @@ namespace McpUnity.Utils
             return current != null ? current.gameObject : null;
         }
 
+        /// <summary>
+        /// Searches all loaded scenes for a root GameObject with the given name, active or not.
+        /// </summary>
+        /// <param name="rootName">Name of the root GameObject to find</param>
+        /// <returns>The matching root Transform, or null if none is found</returns>
         private static Transform FindRoot(string rootName)
         {
             for (int sceneIndex = 0; sceneIndex < SceneManager.sceneCount; sceneIndex++)
