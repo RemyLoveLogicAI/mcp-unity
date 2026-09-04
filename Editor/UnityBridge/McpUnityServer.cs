@@ -249,6 +249,22 @@ namespace McpUnity.Unity
             // Register AddAssetToSceneTool
             AddAssetToSceneTool addAssetToSceneTool = new AddAssetToSceneTool();
             _tools.Add(addAssetToSceneTool.Name, addAssetToSceneTool);
+
+            // Register ReadScriptTool
+            ReadScriptTool readScriptTool = new ReadScriptTool();
+            _tools.Add(readScriptTool.Name, readScriptTool);
+
+            // Register CreateScriptTool
+            CreateScriptTool createScriptTool = new CreateScriptTool();
+            _tools.Add(createScriptTool.Name, createScriptTool);
+
+            // Register DeleteScriptTool
+            DeleteScriptTool deleteScriptTool = new DeleteScriptTool();
+            _tools.Add(deleteScriptTool.Name, deleteScriptTool);
+
+            // Register ClearConsoleTool
+            ClearConsoleTool clearConsoleTool = new ClearConsoleTool(_consoleLogsService);
+            _tools.Add(clearConsoleTool.Name, clearConsoleTool);
         }
         
         /// <summary>
