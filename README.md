@@ -85,6 +85,12 @@ The following tools are available for manipulating and querying Unity scenes and
 - `add_asset_to_scene`: Adds an asset from the AssetDatabase to the Unity scene
   > **Example prompt:** "Add the Player prefab from my project to the current scene"
 
+- `destroy_component`: Removes a component from a GameObject, identified by path or instance ID and the component's type name
+  > **Example prompt:** "Remove the Rigidbody component from the Player object"
+
+- `set_gameobject_parent`: Sets a GameObject's parent in the hierarchy, or moves it to the scene root when no parent is provided
+  > **Example prompt:** "Move the Sword object to be a child of the Player object"
+
 ### MCP Server Resources
 
 - `unity://menu-items`: Retrieves a list of all available menu items in the Unity Editor to facilitate `execute_menu_item` tool
@@ -107,6 +113,9 @@ The following tools are available for manipulating and querying Unity scenes and
 
 - `unity://tests/{testMode}`: Retrieves information about tests in the Unity Test Runner
   > **Example prompt:** "List all available tests in my Unity project"
+
+- `unity://component-types`: Retrieves the names of all non-abstract Component-derived types available in the project, for use with `update_component`/`destroy_component`
+  > **Example prompt:** "What component types are available that have 'Audio' in the name?"
 
 ## Requirements
 - Unity 2022.3 or later - to [install the server](#install-server)
