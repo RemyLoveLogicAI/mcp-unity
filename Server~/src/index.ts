@@ -26,6 +26,8 @@ import { registerMoveAssetTool } from './tools/moveAssetTool.js';
 import { registerDeleteAssetTool } from './tools/deleteAssetTool.js';
 import { registerCreateAssetFolderTool } from './tools/createAssetFolderTool.js';
 import { registerCreateMaterialTool } from './tools/createMaterialTool.js';
+import { registerDestroyComponentTool } from './tools/destroyComponentTool.js';
+import { registerSetGameObjectParentTool } from './tools/setGameObjectParentTool.js';
 import { registerGetMenuItemsResource } from './resources/getMenuItemResource.js';
 import { registerGetConsoleLogsResource } from './resources/getConsoleLogsResource.js';
 import { registerGetHierarchyResource } from './resources/getScenesHierarchyResource.js';
@@ -34,6 +36,7 @@ import { registerGetAssetsResource } from './resources/getAssetsResource.js';
 import { registerGetTestsResource } from './resources/getTestsResource.js';
 import { registerGetGameObjectResource } from './resources/getGameObjectResource.js';
 import { registerGetOpenScenesResource } from './resources/getOpenScenesResource.js';
+import { registerGetComponentTypesResource } from './resources/getComponentTypesResource.js';
 import { registerGameObjectHandlingPrompt } from './prompts/gameobjectHandlingPrompt.js';
 
 // Initialize loggers
@@ -84,6 +87,8 @@ registerMoveAssetTool(server, mcpUnity, toolLogger);
 registerDeleteAssetTool(server, mcpUnity, toolLogger);
 registerCreateAssetFolderTool(server, mcpUnity, toolLogger);
 registerCreateMaterialTool(server, mcpUnity, toolLogger);
+registerDestroyComponentTool(server, mcpUnity, toolLogger);
+registerSetGameObjectParentTool(server, mcpUnity, toolLogger);
 
 // Register all resources into the MCP server
 registerGetTestsResource(server, mcpUnity, resourceLogger);
@@ -94,6 +99,7 @@ registerGetHierarchyResource(server, mcpUnity, resourceLogger);
 registerGetPackagesResource(server, mcpUnity, resourceLogger);
 registerGetAssetsResource(server, mcpUnity, resourceLogger);
 registerGetOpenScenesResource(server, mcpUnity, resourceLogger);
+registerGetComponentTypesResource(server, mcpUnity, resourceLogger);
 
 // Register all prompts into the MCP server
 registerGameObjectHandlingPrompt(server);
