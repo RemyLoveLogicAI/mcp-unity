@@ -12,6 +12,11 @@ import { registerGetConsoleLogsTool } from './tools/getConsoleLogsTool.js';
 import { registerUpdateComponentTool } from './tools/updateComponentTool.js';
 import { registerAddAssetToSceneTool } from './tools/addAssetToSceneTool.js';
 import { registerUpdateGameObjectTool } from './tools/updateGameObjectTool.js';
+import { registerCopyAssetTool } from './tools/copyAssetTool.js';
+import { registerMoveAssetTool } from './tools/moveAssetTool.js';
+import { registerDeleteAssetTool } from './tools/deleteAssetTool.js';
+import { registerCreateAssetFolderTool } from './tools/createAssetFolderTool.js';
+import { registerCreateMaterialTool } from './tools/createMaterialTool.js';
 import { registerGetMenuItemsResource } from './resources/getMenuItemResource.js';
 import { registerGetConsoleLogsResource } from './resources/getConsoleLogsResource.js';
 import { registerGetHierarchyResource } from './resources/getScenesHierarchyResource.js';
@@ -55,6 +60,11 @@ registerGetConsoleLogsTool(server, mcpUnity, toolLogger);
 registerUpdateComponentTool(server, mcpUnity, toolLogger);
 registerAddAssetToSceneTool(server, mcpUnity, toolLogger);
 registerUpdateGameObjectTool(server, mcpUnity, toolLogger);
+registerCopyAssetTool(server, mcpUnity, toolLogger);
+registerMoveAssetTool(server, mcpUnity, toolLogger);
+registerDeleteAssetTool(server, mcpUnity, toolLogger);
+registerCreateAssetFolderTool(server, mcpUnity, toolLogger);
+registerCreateMaterialTool(server, mcpUnity, toolLogger);
 
 // Register all resources into the MCP server
 registerGetTestsResource(server, mcpUnity, resourceLogger);

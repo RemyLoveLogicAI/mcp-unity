@@ -85,6 +85,21 @@ The following tools are available for manipulating and querying Unity scenes and
 - `add_asset_to_scene`: Adds an asset from the AssetDatabase to the Unity scene
   > **Example prompt:** "Add the Player prefab from my project to the current scene"
 
+- `copy_asset`: Copies an asset from one path to another in the project
+  > **Example prompt:** "Copy the Red material to a new file called Blue"
+
+- `move_asset`: Moves or renames an asset from one path to another
+  > **Example prompt:** "Rename Assets/Materials/Red.mat to Crimson.mat"
+
+- `delete_asset`: Deletes one or more assets by path (moves them to the OS trash, not permanent deletion)
+  > **Example prompt:** "Delete the unused OldEnemy material"
+
+- `create_asset_folder`: Creates a new folder at a given parent path
+  > **Example prompt:** "Create a new folder called Materials under Assets"
+
+- `create_material`: Creates a new material asset with a given shader
+  > **Example prompt:** "Create a new material called Crimson using the Standard shader"
+
 ### MCP Server Resources
 
 - `unity://menu-items`: Retrieves a list of all available menu items in the Unity Editor to facilitate `execute_menu_item` tool
