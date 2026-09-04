@@ -62,9 +62,11 @@ namespace McpUnity.Tools
             // Preserve the prefab connection when duplicating a prefab instance, matching AddAssetToSceneTool's approach
             GameObject duplicatedGameObject;
             PrefabAssetType prefabType = PrefabUtility.GetPrefabAssetType(sourceGameObject);
-            if (prefabType != PrefabAssetType.NotAPrefab)
+            Object prefabSource = prefabType != PrefabAssetType.NotAPrefab
+                ? PrefabUtility.GetCorrespondingObjectFromSource(sourceGameObject)
+                : null;
+            if (prefabSource != null)
             {
-                Object prefabSource = PrefabUtility.GetCorrespondingObjectFromSource(sourceGameObject);
                 duplicatedGameObject = (GameObject)PrefabUtility.InstantiatePrefab(prefabSource, sourceGameObject.transform.parent);
                 duplicatedGameObject.transform.SetSiblingIndex(sourceGameObject.transform.GetSiblingIndex() + 1);
                 duplicatedGameObject.transform.localPosition = sourceGameObject.transform.localPosition;
