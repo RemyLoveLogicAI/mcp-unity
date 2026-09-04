@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEditor;
 using McpUnity.Unity;
@@ -42,15 +43,15 @@ namespace McpUnity.Tools
                 );
             }
 
-            if (!path.StartsWith("Assets/") || !path.EndsWith(".cs"))
+            if (!path.StartsWith("Assets/") || !path.EndsWith(".cs") || !TryResolveWithinAssets(path, out string fullPath))
             {
                 return McpUnitySocketHandler.CreateErrorResponse(
-                    $"Invalid script path '{path}'. Path must start with 'Assets/' and end with '.cs'.",
+                    $"Invalid script path '{path}'. Path must start with 'Assets/', end with '.cs', and stay within the project's Assets folder.",
                     "validation_error"
                 );
             }
 
-            if (File.Exists(path))
+            if (File.Exists(fullPath))
             {
                 return McpUnitySocketHandler.CreateErrorResponse(
                     $"A script already exists at '{path}'. Choose a different path or delete the existing script first.",
@@ -58,13 +59,13 @@ namespace McpUnity.Tools
                 );
             }
 
-            string directory = Path.GetDirectoryName(path);
+            string directory = Path.GetDirectoryName(fullPath);
             if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
-            File.WriteAllText(path, content);
+            File.WriteAllText(fullPath, content);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
 
             McpLogger.LogInfo($"Created script '{path}'");
@@ -76,6 +77,36 @@ namespace McpUnity.Tools
                 ["message"] = $"Successfully created script '{path}'. Unity will compile it shortly.",
                 ["path"] = path
             };
+        }
+
+        /// <summary>
+        /// Resolve a validated "Assets/..." path to its full filesystem path, rejecting any path
+        /// (e.g. via "../" segments) that would resolve outside the project's Assets folder
+        /// </summary>
+        /// <param name="path">The "Assets/..." relative path to resolve</param>
+        /// <param name="fullPath">The resolved full path, if it stays within Assets</param>
+        /// <returns>True if the path resolves within the Assets folder</returns>
+        private static bool TryResolveWithinAssets(string path, out string fullPath)
+        {
+            fullPath = null;
+
+            try
+            {
+                string assetsRoot = Path.GetFullPath("Assets") + Path.DirectorySeparatorChar;
+                string resolved = Path.GetFullPath(path);
+
+                if (!resolved.StartsWith(assetsRoot, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                fullPath = resolved;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

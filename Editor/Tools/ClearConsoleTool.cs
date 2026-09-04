@@ -30,6 +30,7 @@ namespace McpUnity.Tools
         {
             _consoleLogsService.ClearLogs();
 
+            bool unityConsoleCleared = false;
             try
             {
                 // UnityEditor.LogEntries is an internal API, so it must be reached via reflection
@@ -37,6 +38,7 @@ namespace McpUnity.Tools
                 MethodInfo clearMethod = logEntriesType?.GetMethod("Clear",
                     BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
                 clearMethod?.Invoke(null, null);
+                unityConsoleCleared = clearMethod != null;
             }
             catch (Exception ex)
             {
@@ -45,9 +47,11 @@ namespace McpUnity.Tools
 
             return new JObject
             {
-                ["success"] = true,
+                ["success"] = unityConsoleCleared,
                 ["type"] = "text",
-                ["message"] = "Successfully cleared the console"
+                ["message"] = unityConsoleCleared
+                    ? "Successfully cleared the console"
+                    : "Cleared MCP log history, but failed to clear the Unity Editor console window"
             };
         }
     }
