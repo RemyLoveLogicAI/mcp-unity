@@ -7,9 +7,12 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 // Constants for the tool
 const toolName = 'set_editor_state';
-const toolDescription = "Controls the Unity Editor's play mode state (play, pause, or stop)";
+const toolDescription = "Controls the Unity Editor's play mode state (play, pause, resume, or stop). " +
+  "Play/stop transitions are asynchronous in Unity, so the isPlaying/isPaused values in the response " +
+  "reflect the transition as requested and may not be fully applied yet; read the unity://editor-state " +
+  "resource to confirm the observed state.";
 const paramsSchema = z.object({
-  state: z.enum(['play', 'pause', 'stop']).describe("The desired editor state: 'play', 'pause', or 'stop'")
+  state: z.enum(['play', 'pause', 'resume', 'stop']).describe("The desired editor state: 'play', 'pause', 'resume', or 'stop'")
 });
 
 /**

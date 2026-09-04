@@ -91,7 +91,7 @@ The following tools are available for manipulating and querying Unity scenes and
 - `duplicate_gameobject`: Duplicates a GameObject (and its children) in the scene by path or instance ID
   > **Example prompt:** "Duplicate the Enemy GameObject and name the copy Enemy_2"
 
-- `set_editor_state`: Controls the Unity Editor's play mode state (play, pause, or stop)
+- `set_editor_state`: Controls the Unity Editor's play mode state (play, pause, resume, or stop)
   > **Example prompt:** "Enter play mode so I can test the level"
 
 ### MCP Server Resources
