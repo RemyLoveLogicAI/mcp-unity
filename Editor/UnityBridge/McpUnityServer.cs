@@ -249,6 +249,18 @@ namespace McpUnity.Unity
             // Register AddAssetToSceneTool
             AddAssetToSceneTool addAssetToSceneTool = new AddAssetToSceneTool();
             _tools.Add(addAssetToSceneTool.Name, addAssetToSceneTool);
+
+            // Register DeleteGameObjectTool
+            DeleteGameObjectTool deleteGameObjectTool = new DeleteGameObjectTool();
+            _tools.Add(deleteGameObjectTool.Name, deleteGameObjectTool);
+
+            // Register DuplicateGameObjectTool
+            DuplicateGameObjectTool duplicateGameObjectTool = new DuplicateGameObjectTool();
+            _tools.Add(duplicateGameObjectTool.Name, duplicateGameObjectTool);
+
+            // Register SetEditorStateTool
+            SetEditorStateTool setEditorStateTool = new SetEditorStateTool();
+            _tools.Add(setEditorStateTool.Name, setEditorStateTool);
         }
         
         /// <summary>
@@ -283,6 +295,10 @@ namespace McpUnity.Unity
             // Register GetGameObjectResource
             GetGameObjectResource getGameObjectResource = new GetGameObjectResource();
             _resources.Add(getGameObjectResource.Name, getGameObjectResource);
+
+            // Register GetEditorStateResource
+            GetEditorStateResource getEditorStateResource = new GetEditorStateResource();
+            _resources.Add(getEditorStateResource.Name, getEditorStateResource);
         }
         
         /// <summary>
