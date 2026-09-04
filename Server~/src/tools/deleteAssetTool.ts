@@ -63,7 +63,10 @@ async function toolHandler(mcpUnity: McpUnity, params: any): Promise<CallToolRes
     params
   });
 
-  if (!response.success) {
+  // Only throw when nothing was deleted; a partial batch failure is still useful
+  // to the caller, so surface the per-path deletedPaths/failedPaths breakdown
+  // in response.message rather than discarding it.
+  if (!response.success && (!response.deletedPaths || response.deletedPaths.length === 0)) {
     throw new McpUnityError(
       ErrorType.TOOL_EXECUTION,
       response.message || `Failed to delete asset(s)`

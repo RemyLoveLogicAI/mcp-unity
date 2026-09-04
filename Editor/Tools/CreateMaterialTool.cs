@@ -71,7 +71,7 @@ namespace McpUnity.Tools
             Material material = new Material(shader);
             AssetDatabase.CreateAsset(material, path);
 
-            McpLogger.LogInfo($"[MCP Unity] Created material '{path}' with shader '{resolvedShaderName}'");
+            McpLogger.LogInfo($"Created material '{path}' with shader '{resolvedShaderName}'");
 
             return new JObject
             {
