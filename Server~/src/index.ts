@@ -21,6 +21,9 @@ import { registerReadScriptTool } from './tools/readScriptTool.js';
 import { registerCreateScriptTool } from './tools/createScriptTool.js';
 import { registerDeleteScriptTool } from './tools/deleteScriptTool.js';
 import { registerClearConsoleTool } from './tools/clearConsoleTool.js';
+import { registerDeleteGameObjectTool } from './tools/deleteGameObjectTool.js';
+import { registerDuplicateGameObjectTool } from './tools/duplicateGameObjectTool.js';
+import { registerSetEditorStateTool } from './tools/setEditorStateTool.js';
 import { registerGetMenuItemsResource } from './resources/getMenuItemResource.js';
 import { registerGetConsoleLogsResource } from './resources/getConsoleLogsResource.js';
 import { registerGetHierarchyResource } from './resources/getScenesHierarchyResource.js';
@@ -29,6 +32,7 @@ import { registerGetAssetsResource } from './resources/getAssetsResource.js';
 import { registerGetTestsResource } from './resources/getTestsResource.js';
 import { registerGetGameObjectResource } from './resources/getGameObjectResource.js';
 import { registerGetOpenScenesResource } from './resources/getOpenScenesResource.js';
+import { registerGetEditorStateResource } from './resources/getEditorStateResource.js';
 import { registerGameObjectHandlingPrompt } from './prompts/gameobjectHandlingPrompt.js';
 
 // Initialize loggers
@@ -74,6 +78,9 @@ registerReadScriptTool(server, mcpUnity, toolLogger);
 registerCreateScriptTool(server, mcpUnity, toolLogger);
 registerDeleteScriptTool(server, mcpUnity, toolLogger);
 registerClearConsoleTool(server, mcpUnity, toolLogger);
+registerDeleteGameObjectTool(server, mcpUnity, toolLogger);
+registerDuplicateGameObjectTool(server, mcpUnity, toolLogger);
+registerSetEditorStateTool(server, mcpUnity, toolLogger);
 
 // Register all resources into the MCP server
 registerGetTestsResource(server, mcpUnity, resourceLogger);
@@ -84,6 +91,7 @@ registerGetHierarchyResource(server, mcpUnity, resourceLogger);
 registerGetPackagesResource(server, mcpUnity, resourceLogger);
 registerGetAssetsResource(server, mcpUnity, resourceLogger);
 registerGetOpenScenesResource(server, mcpUnity, resourceLogger);
+registerGetEditorStateResource(server, mcpUnity, resourceLogger);
 
 // Register all prompts into the MCP server
 registerGameObjectHandlingPrompt(server);

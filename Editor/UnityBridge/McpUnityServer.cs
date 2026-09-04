@@ -285,6 +285,18 @@ namespace McpUnity.Unity
             // Register ClearConsoleTool
             ClearConsoleTool clearConsoleTool = new ClearConsoleTool(_consoleLogsService);
             _tools.Add(clearConsoleTool.Name, clearConsoleTool);
+
+            // Register DeleteGameObjectTool
+            DeleteGameObjectTool deleteGameObjectTool = new DeleteGameObjectTool();
+            _tools.Add(deleteGameObjectTool.Name, deleteGameObjectTool);
+
+            // Register DuplicateGameObjectTool
+            DuplicateGameObjectTool duplicateGameObjectTool = new DuplicateGameObjectTool();
+            _tools.Add(duplicateGameObjectTool.Name, duplicateGameObjectTool);
+
+            // Register SetEditorStateTool
+            SetEditorStateTool setEditorStateTool = new SetEditorStateTool();
+            _tools.Add(setEditorStateTool.Name, setEditorStateTool);
         }
         
         /// <summary>
@@ -323,6 +335,10 @@ namespace McpUnity.Unity
             // Register GetOpenScenesResource
             GetOpenScenesResource getOpenScenesResource = new GetOpenScenesResource();
             _resources.Add(getOpenScenesResource.Name, getOpenScenesResource);
+
+            // Register GetEditorStateResource
+            GetEditorStateResource getEditorStateResource = new GetEditorStateResource();
+            _resources.Add(getEditorStateResource.Name, getEditorStateResource);
         }
         
         /// <summary>
