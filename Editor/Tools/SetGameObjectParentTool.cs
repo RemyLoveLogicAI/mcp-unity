@@ -39,7 +39,7 @@ namespace McpUnity.Tools
 
             GameObject target = instanceId.HasValue
                 ? EditorUtility.InstanceIDToObject(instanceId.Value) as GameObject
-                : GameObject.Find(objectPath);
+                : GameObject.Find(objectPath) ?? FindGameObjectByPath(objectPath);
 
             if (target == null)
             {
@@ -66,7 +66,7 @@ namespace McpUnity.Tools
             {
                 GameObject parentObject = parentInstanceId.HasValue
                     ? EditorUtility.InstanceIDToObject(parentInstanceId.Value) as GameObject
-                    : GameObject.Find(parentObjectPath);
+                    : GameObject.Find(parentObjectPath) ?? FindGameObjectByPath(parentObjectPath);
 
                 if (parentObject == null)
                 {
@@ -109,6 +109,50 @@ namespace McpUnity.Tools
                 ["instanceId"] = target.GetInstanceID(),
                 ["name"] = target.name
             };
+        }
+
+        /// <summary>
+        /// Find a GameObject by its hierarchy path, including inactive objects
+        /// </summary>
+        /// <param name="path">The path to the GameObject (e.g. "Canvas/Panel/Button")</param>
+        /// <returns>The GameObject if found, null otherwise</returns>
+        private GameObject FindGameObjectByPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
+
+            string[] pathParts = path.Split('/');
+            GameObject[] rootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+
+            foreach (GameObject rootObj in rootGameObjects)
+            {
+                if (rootObj.name != pathParts[0])
+                {
+                    continue;
+                }
+
+                GameObject current = rootObj;
+                for (int i = 1; i < pathParts.Length; i++)
+                {
+                    Transform child = current.transform.Find(pathParts[i]);
+                    if (child == null)
+                    {
+                        current = null;
+                        break;
+                    }
+
+                    current = child.gameObject;
+                }
+
+                if (current != null)
+                {
+                    return current;
+                }
+            }
+
+            return null;
         }
     }
 }
