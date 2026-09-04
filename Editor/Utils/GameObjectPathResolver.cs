@@ -41,11 +41,16 @@ namespace McpUnity.Utils
 
         /// <summary>
         /// Searches all loaded scenes for a root GameObject with the given name, active or not.
+        /// Returns null (treated as "not found" by callers) if more than one loaded scene root
+        /// shares the name, rather than silently operating on whichever one was found first -
+        /// callers should disambiguate with an instance ID in that case.
         /// </summary>
         /// <param name="rootName">Name of the root GameObject to find</param>
-        /// <returns>The matching root Transform, or null if none is found</returns>
+        /// <returns>The matching root Transform, or null if none or more than one is found</returns>
         private static Transform FindRoot(string rootName)
         {
+            Transform match = null;
+
             for (int sceneIndex = 0; sceneIndex < SceneManager.sceneCount; sceneIndex++)
             {
                 Scene scene = SceneManager.GetSceneAt(sceneIndex);
@@ -56,14 +61,21 @@ namespace McpUnity.Utils
 
                 foreach (GameObject rootObject in scene.GetRootGameObjects())
                 {
-                    if (rootObject.name == rootName)
+                    if (rootObject.name != rootName)
                     {
-                        return rootObject.transform;
+                        continue;
                     }
+
+                    if (match != null)
+                    {
+                        return null;
+                    }
+
+                    match = rootObject.transform;
                 }
             }
 
-            return null;
+            return match;
         }
     }
 }

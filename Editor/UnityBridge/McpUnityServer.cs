@@ -22,7 +22,11 @@ namespace McpUnity.Unity
     public class McpUnityServer : IDisposable
     {
         private static McpUnityServer _instance;
-        private static bool _wasListeningBeforePlayModeTransition;
+
+        // Persisted via SessionState (not a plain static field) because entering/exiting Play Mode can
+        // trigger a domain reload, which resets static fields before EnteredPlayMode/EnteredEditMode fires.
+        // SessionState survives a domain reload for the rest of the Editor session.
+        private const string WasListeningBeforePlayModeTransitionKey = "McpUnity.WasListeningBeforePlayModeTransition";
 
         private readonly Dictionary<string, McpToolBase> _tools = new Dictionary<string, McpToolBase>();
         private readonly Dictionary<string, McpResourceBase> _resources = new Dictionary<string, McpResourceBase>();
@@ -366,7 +370,7 @@ namespace McpUnity.Unity
                 case PlayModeStateChange.ExitingEditMode:
                 case PlayModeStateChange.ExitingPlayMode:
                     // About to transition play modes
-                    _wasListeningBeforePlayModeTransition = Instance.IsListening;
+                    SessionState.SetBool(WasListeningBeforePlayModeTransitionKey, Instance.IsListening);
                     if (Instance.IsListening)
                     {
                         Instance.StopServer();
@@ -376,7 +380,8 @@ namespace McpUnity.Unity
                 case PlayModeStateChange.EnteredEditMode:
                     // Settled into the new mode (play or edit)
                     if (!Instance.IsListening &&
-                        (McpUnitySettings.Instance.AutoStartServer || _wasListeningBeforePlayModeTransition))
+                        (McpUnitySettings.Instance.AutoStartServer ||
+                         SessionState.GetBool(WasListeningBeforePlayModeTransitionKey, false)))
                     {
                         Instance.StartServer();
                     }
