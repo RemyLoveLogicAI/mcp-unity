@@ -12,6 +12,10 @@ import { registerGetConsoleLogsTool } from './tools/getConsoleLogsTool.js';
 import { registerUpdateComponentTool } from './tools/updateComponentTool.js';
 import { registerAddAssetToSceneTool } from './tools/addAssetToSceneTool.js';
 import { registerUpdateGameObjectTool } from './tools/updateGameObjectTool.js';
+import { registerReadScriptTool } from './tools/readScriptTool.js';
+import { registerCreateScriptTool } from './tools/createScriptTool.js';
+import { registerDeleteScriptTool } from './tools/deleteScriptTool.js';
+import { registerClearConsoleTool } from './tools/clearConsoleTool.js';
 import { registerGetMenuItemsResource } from './resources/getMenuItemResource.js';
 import { registerGetConsoleLogsResource } from './resources/getConsoleLogsResource.js';
 import { registerGetHierarchyResource } from './resources/getScenesHierarchyResource.js';
@@ -55,6 +59,10 @@ registerGetConsoleLogsTool(server, mcpUnity, toolLogger);
 registerUpdateComponentTool(server, mcpUnity, toolLogger);
 registerAddAssetToSceneTool(server, mcpUnity, toolLogger);
 registerUpdateGameObjectTool(server, mcpUnity, toolLogger);
+registerReadScriptTool(server, mcpUnity, toolLogger);
+registerCreateScriptTool(server, mcpUnity, toolLogger);
+registerDeleteScriptTool(server, mcpUnity, toolLogger);
+registerClearConsoleTool(server, mcpUnity, toolLogger);
 
 // Register all resources into the MCP server
 registerGetTestsResource(server, mcpUnity, resourceLogger);

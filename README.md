@@ -85,6 +85,18 @@ The following tools are available for manipulating and querying Unity scenes and
 - `add_asset_to_scene`: Adds an asset from the AssetDatabase to the Unity scene
   > **Example prompt:** "Add the Player prefab from my project to the current scene"
 
+- `read_script`: Reads the contents of a C# script file from the project
+  > **Example prompt:** "Show me the contents of Assets/Scripts/PlayerController.cs"
+
+- `create_script`: Creates a new C# script file with the given contents
+  > **Example prompt:** "Create a new script called Enemy.cs in Assets/Scripts with a basic MonoBehaviour"
+
+- `delete_script`: Deletes a C# script file by path (moves it to the OS trash, not permanent deletion)
+  > **Example prompt:** "Delete the unused Assets/Scripts/OldEnemy.cs script"
+
+- `clear_console`: Clears the Unity Editor console and the MCP server's captured log history
+  > **Example prompt:** "Clear the Unity console"
+
 ### MCP Server Resources
 
 - `unity://menu-items`: Retrieves a list of all available menu items in the Unity Editor to facilitate `execute_menu_item` tool
