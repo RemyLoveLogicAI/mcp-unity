@@ -85,20 +85,17 @@ The following tools are available for manipulating and querying Unity scenes and
 - `add_asset_to_scene`: Adds an asset from the AssetDatabase to the Unity scene
   > **Example prompt:** "Add the Player prefab from my project to the current scene"
 
-- `create_scene`: Creates a new empty scene with default GameObjects and saves it to a given Assets path
-  > **Example prompt:** "Create a new scene at Assets/Scenes/Level2.unity"
+- `read_script`: Reads the contents of a C# script file from the project
+  > **Example prompt:** "Show me the contents of Assets/Scripts/PlayerController.cs"
 
-- `open_scene`: Opens a scene by path, replacing or adding to the currently loaded scenes
-  > **Example prompt:** "Open the MainMenu scene"
+- `create_script`: Creates a new C# script file with the given contents
+  > **Example prompt:** "Create a new script called Enemy.cs in Assets/Scripts with a basic MonoBehaviour"
 
-- `save_scene`: Saves the active scene (optionally to a new path), or all open scenes at once
-  > **Example prompt:** "Save the current scene"
+- `delete_script`: Deletes a C# script file by path (moves it to the OS trash, not permanent deletion)
+  > **Example prompt:** "Delete the unused Assets/Scripts/OldEnemy.cs script"
 
-- `set_active_scene`: Sets which currently loaded scene is the active scene
-  > **Example prompt:** "Make the Lighting scene the active scene"
-
-- `unload_scene`: Closes/unloads a currently loaded scene by path
-  > **Example prompt:** "Unload the Lighting scene"
+- `clear_console`: Clears the Unity Editor console and the MCP server's captured log history
+  > **Example prompt:** "Clear the Unity console"
 
 ### MCP Server Resources
 
@@ -122,9 +119,6 @@ The following tools are available for manipulating and querying Unity scenes and
 
 - `unity://tests/{testMode}`: Retrieves information about tests in the Unity Test Runner
   > **Example prompt:** "List all available tests in my Unity project"
-
-- `unity://scenes`: Retrieves the list of currently loaded scenes, including which one is active
-  > **Example prompt:** "What scenes are currently open?"
 
 ## Requirements
 - Unity 2022.3 or later - to [install the server](#install-server)
