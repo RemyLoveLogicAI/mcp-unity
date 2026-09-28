@@ -33,10 +33,42 @@ namespace McpUnity.Utils
 
             for (int i = 1; current != null && i < parts.Length; i++)
             {
-                current = current.Find(parts[i]);
+                current = FindChild(current, parts[i]);
             }
 
             return current != null ? current.gameObject : null;
+        }
+
+        /// <summary>
+        /// Finds a direct child of the given transform with the given name, active or not.
+        /// Returns null (treated as "not found"/ambiguous by callers) if more than one direct
+        /// child shares the name, rather than silently returning Transform.Find's arbitrary match -
+        /// callers should disambiguate with an instance ID in that case.
+        /// </summary>
+        /// <param name="parent">The transform to search direct children of</param>
+        /// <param name="childName">Name of the child to find</param>
+        /// <returns>The matching child Transform, or null if none or more than one is found</returns>
+        private static Transform FindChild(Transform parent, string childName)
+        {
+            Transform match = null;
+
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child.name != childName)
+                {
+                    continue;
+                }
+
+                if (match != null)
+                {
+                    return null;
+                }
+
+                match = child;
+            }
+
+            return match;
         }
 
         /// <summary>

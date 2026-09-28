@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
 using McpUnity.Unity;
 using McpUnity.Utils;
@@ -92,6 +93,15 @@ namespace McpUnity.Tools
             else
             {
                 duplicatedGameObject = Object.Instantiate(sourceGameObject, sourceGameObject.transform.parent);
+            }
+
+            // Instantiate(..., parent: null) places the new object in the active scene, not necessarily
+            // the source's scene. For a root object (no parent) being duplicated in a loaded-but-inactive
+            // scene, move it back into the source's own scene so the duplicate doesn't silently end up
+            // somewhere else.
+            if (sourceGameObject.transform.parent == null && duplicatedGameObject.scene != sourceGameObject.scene)
+            {
+                SceneManager.MoveGameObjectToScene(duplicatedGameObject, sourceGameObject.scene);
             }
 
             duplicatedGameObject.name = !string.IsNullOrEmpty(newName)
