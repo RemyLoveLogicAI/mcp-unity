@@ -10,7 +10,7 @@ const toolName = 'delete_gameobject';
 const toolDescription = 'Deletes a GameObject (and its children) from the scene by path or instance ID';
 const paramsSchema = z.object({
   objectPath: z.string().optional().describe('The path or name of the GameObject to delete (e.g. "Main Camera")'),
-  instanceId: z.number().optional().describe('The instance ID of the GameObject to delete')
+  instanceId: z.number().int().optional().describe('The instance ID of the GameObject to delete')
 });
 
 /**

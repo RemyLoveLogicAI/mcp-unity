@@ -67,10 +67,11 @@ namespace McpUnity.Tools
                     EditorApplication.isPaused = false;
                     break;
                 case "stop":
-                    if (EditorApplication.isPlaying)
-                    {
-                        EditorApplication.isPlaying = false;
-                    }
+                    // Unconditional (unlike 'play' above): if Unity has queued entry into play mode but
+                    // hasn't settled into it yet, a guarded "only if isPlaying" check could leave that
+                    // transition uncancelled. Setting isPlaying = false when already false is a harmless
+                    // no-op, so there's no cost to skipping the guard here.
+                    EditorApplication.isPlaying = false;
                     break;
                 default:
                     return McpUnitySocketHandler.CreateErrorResponse(

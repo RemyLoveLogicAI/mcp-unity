@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
@@ -84,6 +85,12 @@ namespace McpUnity.Tools
                 // NOT cover structural overrides (added/removed components, added/removed child objects,
                 // or nested-prefab-specific overrides) - those would need PrefabUtility.GetObjectOverrides /
                 // GetAddedComponents / GetAddedGameObjects, which is a larger change left for a follow-up.
+                // It also does NOT remap object-reference overrides that point at the source instance's own
+                // sub-objects (e.g. a field overridden to reference one of its own children) - those would
+                // still point at the original instance's sub-object rather than the duplicate's counterpart,
+                // which needs a source-to-duplicate hierarchy mapping to fix correctly. Left as a known gap
+                // alongside the structural-override limitation above rather than attempting an unvalidated
+                // remapping without a live Editor to test against.
                 PropertyModification[] overrides = PrefabUtility.GetPropertyModifications(sourceGameObject);
                 if (overrides != null && overrides.Length > 0)
                 {
@@ -104,9 +111,21 @@ namespace McpUnity.Tools
                 SceneManager.MoveGameObjectToScene(duplicatedGameObject, sourceGameObject.scene);
             }
 
-            duplicatedGameObject.name = !string.IsNullOrEmpty(newName)
-                ? newName
-                : GameObjectUtility.GetUniqueNameForSibling(sourceGameObject.transform.parent, sourceGameObject.name);
+            if (!string.IsNullOrEmpty(newName))
+            {
+                duplicatedGameObject.name = newName;
+            }
+            else if (sourceGameObject.transform.parent != null)
+            {
+                duplicatedGameObject.name = GameObjectUtility.GetUniqueNameForSibling(sourceGameObject.transform.parent, sourceGameObject.name);
+            }
+            else
+            {
+                // GetUniqueNameForSibling(null, ...) checks root objects in the *active* scene, which is
+                // wrong when the source (and now the duplicate, per the scene-move above) is a root object
+                // in a different loaded scene. Check uniqueness against the duplicate's actual scene instead.
+                duplicatedGameObject.name = GetUniqueRootName(duplicatedGameObject.scene, sourceGameObject.name);
+            }
 
             Undo.RegisterCreatedObjectUndo(duplicatedGameObject, "Duplicate GameObject");
 
@@ -121,6 +140,37 @@ namespace McpUnity.Tools
                 ["name"] = duplicatedGameObject.name,
                 ["sourceInstanceId"] = sourceGameObject.GetInstanceID()
             };
+        }
+
+        /// <summary>
+        /// Finds a unique name for a new root GameObject in the given scene, based on the given base name,
+        /// checking against that scene's existing root object names (not necessarily the active scene).
+        /// </summary>
+        /// <param name="scene">The scene the new root object will belong to</param>
+        /// <param name="baseName">The name to make unique</param>
+        /// <returns>The base name if already unique, otherwise the base name with a " (n)" suffix</returns>
+        private static string GetUniqueRootName(Scene scene, string baseName)
+        {
+            HashSet<string> existingNames = new HashSet<string>();
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                existingNames.Add(root.name);
+            }
+
+            if (!existingNames.Contains(baseName))
+            {
+                return baseName;
+            }
+
+            int suffix = 1;
+            string candidate;
+            do
+            {
+                candidate = $"{baseName} ({suffix})";
+                suffix++;
+            } while (existingNames.Contains(candidate));
+
+            return candidate;
         }
     }
 }

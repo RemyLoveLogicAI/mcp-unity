@@ -28,7 +28,7 @@ When working directly with GameObjects or any of their components in Unity scene
 - Tool "update_gameobject" to update a GameObject's core properties (name, tag, layer, active state, static state), or create the GameObject if it does not exist.
 - Tool "update_component" to update or add a component on a GameObject, including common frequently used components (e.g. Transform, RectTransform, BoxCollider, Rigidbody, etc).
 - Tool "duplicate_gameobject" to clone a GameObject (and its children) by ID or path, optionally with a new name.
-- Tool "delete_gameobject" to permanently remove a GameObject (and its children) by ID or path.
+- Tool "delete_gameobject" to remove a GameObject (and its children) by ID or path.
 
 Workflow:
 1. Use "get_scenes_hierarchy" to confirm the GameObject ID or path for "${gameObjectId}".
@@ -37,7 +37,7 @@ Workflow:
 4. Optionally, use "unity://gameobject/${gameObjectId}" to retrieve detailed properties.
 5. To update or add a component on the GameObject, use "update_component".
 6. To clone the GameObject instead of modifying it in place, use "duplicate_gameobject".
-7. To permanently remove the GameObject, use "delete_gameobject" - this cannot be undone by the MCP client once the Editor session state has moved on, so confirm intent first.
+7. To remove the GameObject, use "delete_gameobject" - it can be restored by a human in the Editor via Undo, but the MCP client cannot undo it, so confirm intent first.
 8. Confirm success and report any errors.
 
 Guidance:

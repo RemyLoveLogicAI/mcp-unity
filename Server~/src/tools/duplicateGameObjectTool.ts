@@ -10,7 +10,7 @@ const toolName = 'duplicate_gameobject';
 const toolDescription = 'Duplicates a GameObject (and its children) in the scene by path or instance ID';
 const paramsSchema = z.object({
   objectPath: z.string().optional().describe('The path or name of the GameObject to duplicate (e.g. "Main Camera")'),
-  instanceId: z.number().optional().describe('The instance ID of the GameObject to duplicate'),
+  instanceId: z.number().int().optional().describe('The instance ID of the GameObject to duplicate'),
   newName: z.string().optional().describe('Optional name for the duplicated GameObject')
 });
 
