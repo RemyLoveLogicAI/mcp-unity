@@ -12,6 +12,11 @@ import { registerGetConsoleLogsTool } from './tools/getConsoleLogsTool.js';
 import { registerUpdateComponentTool } from './tools/updateComponentTool.js';
 import { registerAddAssetToSceneTool } from './tools/addAssetToSceneTool.js';
 import { registerUpdateGameObjectTool } from './tools/updateGameObjectTool.js';
+import { registerCreateSceneTool } from './tools/createSceneTool.js';
+import { registerOpenSceneTool } from './tools/openSceneTool.js';
+import { registerSaveSceneTool } from './tools/saveSceneTool.js';
+import { registerSetActiveSceneTool } from './tools/setActiveSceneTool.js';
+import { registerUnloadSceneTool } from './tools/unloadSceneTool.js';
 import { registerReadScriptTool } from './tools/readScriptTool.js';
 import { registerCreateScriptTool } from './tools/createScriptTool.js';
 import { registerDeleteScriptTool } from './tools/deleteScriptTool.js';
@@ -23,6 +28,7 @@ import { registerGetPackagesResource } from './resources/getPackagesResource.js'
 import { registerGetAssetsResource } from './resources/getAssetsResource.js';
 import { registerGetTestsResource } from './resources/getTestsResource.js';
 import { registerGetGameObjectResource } from './resources/getGameObjectResource.js';
+import { registerGetOpenScenesResource } from './resources/getOpenScenesResource.js';
 import { registerGameObjectHandlingPrompt } from './prompts/gameobjectHandlingPrompt.js';
 
 // Initialize loggers
@@ -59,6 +65,11 @@ registerGetConsoleLogsTool(server, mcpUnity, toolLogger);
 registerUpdateComponentTool(server, mcpUnity, toolLogger);
 registerAddAssetToSceneTool(server, mcpUnity, toolLogger);
 registerUpdateGameObjectTool(server, mcpUnity, toolLogger);
+registerCreateSceneTool(server, mcpUnity, toolLogger);
+registerOpenSceneTool(server, mcpUnity, toolLogger);
+registerSaveSceneTool(server, mcpUnity, toolLogger);
+registerSetActiveSceneTool(server, mcpUnity, toolLogger);
+registerUnloadSceneTool(server, mcpUnity, toolLogger);
 registerReadScriptTool(server, mcpUnity, toolLogger);
 registerCreateScriptTool(server, mcpUnity, toolLogger);
 registerDeleteScriptTool(server, mcpUnity, toolLogger);
@@ -72,6 +83,7 @@ registerGetConsoleLogsResource(server, mcpUnity, resourceLogger);
 registerGetHierarchyResource(server, mcpUnity, resourceLogger);
 registerGetPackagesResource(server, mcpUnity, resourceLogger);
 registerGetAssetsResource(server, mcpUnity, resourceLogger);
+registerGetOpenScenesResource(server, mcpUnity, resourceLogger);
 
 // Register all prompts into the MCP server
 registerGameObjectHandlingPrompt(server);
