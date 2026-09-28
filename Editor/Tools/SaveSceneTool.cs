@@ -55,6 +55,16 @@ namespace McpUnity.Tools
                 );
             }
 
+            // Auto-create directory if path is provided and directory doesn't exist
+            if (!string.IsNullOrEmpty(path))
+            {
+                string dir = System.IO.Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(dir) && !System.IO.Directory.Exists(dir))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                    McpLogger.LogInfo($"[MCP Unity] Created directory '{dir}' for scene save");
+                }
+            }
             Scene activeScene = SceneManager.GetActiveScene();
             bool saved = string.IsNullOrEmpty(path)
                 ? EditorSceneManager.SaveScene(activeScene)
