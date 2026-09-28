@@ -44,7 +44,7 @@ Guidance:
 - Use "update_gameobject" for creating GameObjects or changing their core properties.
 - Use "update_component" for adding or modifying components on an existing GameObject.
 - Use "duplicate_gameobject" instead of manually recreating a GameObject when a similar one already exists.
-- Use "delete_gameobject" only when removal was explicitly requested or clearly implied; prefer "update_gameobject" with isActiveSelf=false when deactivating is sufficient.
+- Use "delete_gameobject" only when removal was explicitly requested or clearly implied; prefer "update_gameobject" with activeSelf=false when deactivating is sufficient.
 - Always validate inputs and request clarification if the identifier is ambiguous.`
           }
         },

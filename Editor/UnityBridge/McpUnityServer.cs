@@ -41,8 +41,25 @@ namespace McpUnity.Unity
         /// </summary>
         static McpUnityServer()
         {
+            // Subscribe these static-method handlers immediately, not deferred behind the delayCall below.
+            // [InitializeOnLoad] static constructors run synchronously as part of completing a domain
+            // reload, before Unity dispatches further engine events in the reloaded domain - so this
+            // guarantees the subscriptions are in place before EnteredPlayMode/EnteredEditMode can fire.
+            // The delayCall's lazy Instance access, by contrast, waits for a later editor update and could
+            // run after such an event already fired, missing it entirely (e.g. leaving a manually-started
+            // bridge, with AutoStartServer disabled, never restarted after a play-mode transition whose
+            // domain reload outraced the delayCall).
+            AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
+            AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
+
+            AssemblyReloadEvents.afterAssemblyReload -= OnAfterAssemblyReload;
+            AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
+
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+
             EditorApplication.delayCall += () => {
-                // Ensure Instance is created and hooks are set up after initial domain load
+                // Ensure Instance is created and remaining hooks are set up after initial domain load
                 var currentInstance = Instance;
             };
         }
@@ -80,14 +97,8 @@ namespace McpUnity.Unity
             EditorApplication.quitting -= OnEditorQuitting; // Prevent multiple subscriptions on domain reload
             EditorApplication.quitting += OnEditorQuitting;
 
-            AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
-            AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
-
-            AssemblyReloadEvents.afterAssemblyReload -= OnAfterAssemblyReload;
-            AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
-
-            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
-            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            // beforeAssemblyReload/afterAssemblyReload/playModeStateChanged are already subscribed in the
+            // static constructor above (see its comment for why), so they're not repeated here.
 
             InstallServer();
             InitializeServices();

@@ -54,11 +54,22 @@ export function registerDuplicateGameObjectTool(server: McpServer, mcpUnity: Mcp
  */
 async function toolHandler(mcpUnity: McpUnity, params: any): Promise<CallToolResult> {
   // Custom validation since we can't use refine/superRefine while maintaining ZodObject type
-  if ((params.instanceId === undefined || params.instanceId === null) &&
-      (!params.objectPath || params.objectPath.trim() === '')) {
+  const hasInstanceId = params.instanceId !== undefined && params.instanceId !== null;
+  const hasObjectPath = !!params.objectPath && params.objectPath.trim() !== '';
+
+  if (!hasInstanceId && !hasObjectPath) {
     throw new McpUnityError(
       ErrorType.VALIDATION,
       "Either 'objectPath' or 'instanceId' must be provided"
+    );
+  }
+
+  if (hasInstanceId && hasObjectPath) {
+    throw new McpUnityError(
+      ErrorType.VALIDATION,
+      "Provide only one of 'objectPath' or 'instanceId', not both - Unity treats instanceId as " +
+      "authoritative and silently ignores objectPath, so an ambiguous combination could duplicate " +
+      "a different object than the one identified by path"
     );
   }
 
