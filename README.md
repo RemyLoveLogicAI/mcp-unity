@@ -85,6 +85,20 @@ The following tools are available for manipulating and querying Unity scenes and
 - `add_asset_to_scene`: Adds an asset from the AssetDatabase to the Unity scene
   > **Example prompt:** "Add the Player prefab from my project to the current scene"
 
+- `create_scene`: Creates a new empty scene with default GameObjects and saves it to a given Assets path
+  > **Example prompt:** "Create a new scene at Assets/Scenes/Level2.unity"
+- `open_scene`: Opens a scene by path, replacing or adding to the currently loaded scenes
+  > **Example prompt:** "Open the MainMenu scene"
+
+- `save_scene`: Saves the current scene, optionally to a new path
+  > **Example prompt:** "Save the current scene"
+
+- `set_active_scene`: Sets which currently loaded scene is the active scene
+  > **Example prompt:** "Make the Lighting scene the active scene"
+
+- `unload_scene`: Closes/unloads a currently loaded scene by path
+  > **Example prompt:** "Unload the Lighting scene"
+
 - `read_script`: Reads the contents of a C# script file from the project
   > **Example prompt:** "Show me the contents of Assets/Scripts/PlayerController.cs"
 
