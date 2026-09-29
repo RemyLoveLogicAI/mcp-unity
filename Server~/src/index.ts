@@ -28,6 +28,7 @@ import { registerCreateAssetFolderTool } from './tools/createAssetFolderTool.js'
 import { registerCreateMaterialTool } from './tools/createMaterialTool.js';
 import { registerDestroyComponentTool } from './tools/destroyComponentTool.js';
 import { registerSetGameObjectParentTool } from './tools/setGameObjectParentTool.js';
+import { registerCaptureScreenshotTool } from './tools/captureScreenshotTool.js';
 import { registerGetMenuItemsResource } from './resources/getMenuItemResource.js';
 import { registerGetConsoleLogsResource } from './resources/getConsoleLogsResource.js';
 import { registerGetHierarchyResource } from './resources/getScenesHierarchyResource.js';
@@ -89,6 +90,7 @@ registerCreateAssetFolderTool(server, mcpUnity, toolLogger);
 registerCreateMaterialTool(server, mcpUnity, toolLogger);
 registerDestroyComponentTool(server, mcpUnity, toolLogger);
 registerSetGameObjectParentTool(server, mcpUnity, toolLogger);
+registerCaptureScreenshotTool(server, mcpUnity, toolLogger);
 
 // Register all resources into the MCP server
 registerGetTestsResource(server, mcpUnity, resourceLogger);
