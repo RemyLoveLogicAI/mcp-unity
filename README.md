@@ -132,6 +132,9 @@ The following tools are available for manipulating and querying Unity scenes and
 - `set_gameobject_parent`: Sets a GameObject's parent in the hierarchy, or moves it to the scene root when no parent is provided
   > **Example prompt:** "Move the Sword object to be a child of the Player object"
 
+- `capture_screenshot`: Captures a screenshot from the active Scene view camera, or from a specific or main scene camera, and returns it as an image
+  > **Example prompt:** "Show me what the scene looks like right now"
+
 ### MCP Server Resources
 
 - `unity://menu-items`: Retrieves a list of all available menu items in the Unity Editor to facilitate `execute_menu_item` tool
