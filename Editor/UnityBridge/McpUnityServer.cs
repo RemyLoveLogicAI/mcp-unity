@@ -250,7 +250,6 @@ namespace McpUnity.Unity
             AddAssetToSceneTool addAssetToSceneTool = new AddAssetToSceneTool();
             _tools.Add(addAssetToSceneTool.Name, addAssetToSceneTool);
 
-<<<<<<< HEAD
             // Register CreateSceneTool
             CreateSceneTool createSceneTool = new CreateSceneTool();
             _tools.Add(createSceneTool.Name, createSceneTool);
