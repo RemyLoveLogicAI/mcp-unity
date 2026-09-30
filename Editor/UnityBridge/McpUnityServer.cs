@@ -250,7 +250,6 @@ namespace McpUnity.Unity
             AddAssetToSceneTool addAssetToSceneTool = new AddAssetToSceneTool();
             _tools.Add(addAssetToSceneTool.Name, addAssetToSceneTool);
 
-<<<<<<< HEAD
             // Register CreateSceneTool
             CreateSceneTool createSceneTool = new CreateSceneTool();
             _tools.Add(createSceneTool.Name, createSceneTool);
@@ -314,6 +313,10 @@ namespace McpUnity.Unity
             // Register SetGameObjectParentTool
             SetGameObjectParentTool setGameObjectParentTool = new SetGameObjectParentTool();
             _tools.Add(setGameObjectParentTool.Name, setGameObjectParentTool);
+
+            // Register CaptureScreenshotTool
+            CaptureScreenshotTool captureScreenshotTool = new CaptureScreenshotTool();
+            _tools.Add(captureScreenshotTool.Name, captureScreenshotTool);
         }
         
         /// <summary>
