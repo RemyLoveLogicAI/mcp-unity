@@ -111,6 +111,29 @@ The following tools are available for manipulating and querying Unity scenes and
 
 - `clear_console`: Clears the Unity Editor console and the MCP server's captured log history
   > **Example prompt:** "Clear the Unity console"
+- `copy_asset`: Copies an asset from one path to another in the project
+  > **Example prompt:** "Copy the Red material to a new file called Blue"
+
+- `move_asset`: Moves or renames an asset from one path to another
+  > **Example prompt:** "Rename Assets/Materials/Red.mat to Crimson.mat"
+
+- `delete_asset`: Deletes one or more assets by path (moves them to the OS trash, not permanent deletion)
+  > **Example prompt:** "Delete the unused OldEnemy material"
+
+- `create_asset_folder`: Creates a new folder at a given parent path
+  > **Example prompt:** "Create a new folder called Materials under Assets"
+
+- `create_material`: Creates a new material asset with a given shader
+  > **Example prompt:** "Create a new material called Crimson using the Standard shader"
+
+- `destroy_component`: Removes a component from a GameObject, identified by path or instance ID and the component's type name
+  > **Example prompt:** "Remove the Rigidbody component from the Player object"
+
+- `set_gameobject_parent`: Sets a GameObject's parent in the hierarchy, or moves it to the scene root when no parent is provided
+  > **Example prompt:** "Move the Sword object to be a child of the Player object"
+
+- `capture_screenshot`: Captures a screenshot from the active Scene view camera, or from a specific or main scene camera, and returns it as an image
+  > **Example prompt:** "Show me what the scene looks like right now"
 
 - `delete_gameobject`: Deletes a GameObject (and its children) from the scene by path or instance ID
   > **Example prompt:** "Delete the OldEnemy GameObject from the scene"
@@ -147,6 +170,9 @@ The following tools are available for manipulating and querying Unity scenes and
 
 - `unity://editor-state`: Retrieves the current state of the Unity Editor (play mode, paused, compiling)
   > **Example prompt:** "Is the Unity Editor currently in play mode?"
+
+- `unity://component-types`: Retrieves the names of all non-abstract Component-derived types available in the project, for use with `update_component`/`destroy_component`
+  > **Example prompt:** "What component types are available that have 'Audio' in the name?"
 
 ## Requirements
 - Unity 2022.3 or later - to [install the server](#install-server)

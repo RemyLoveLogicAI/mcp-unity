@@ -313,6 +313,38 @@ namespace McpUnity.Unity
             // Register SetEditorStateTool
             SetEditorStateTool setEditorStateTool = new SetEditorStateTool();
             _tools.Add(setEditorStateTool.Name, setEditorStateTool);
+
+            // Register CopyAssetTool
+            CopyAssetTool copyAssetTool = new CopyAssetTool();
+            _tools.Add(copyAssetTool.Name, copyAssetTool);
+
+            // Register MoveAssetTool
+            MoveAssetTool moveAssetTool = new MoveAssetTool();
+            _tools.Add(moveAssetTool.Name, moveAssetTool);
+
+            // Register DeleteAssetTool
+            DeleteAssetTool deleteAssetTool = new DeleteAssetTool();
+            _tools.Add(deleteAssetTool.Name, deleteAssetTool);
+
+            // Register CreateAssetFolderTool
+            CreateAssetFolderTool createAssetFolderTool = new CreateAssetFolderTool();
+            _tools.Add(createAssetFolderTool.Name, createAssetFolderTool);
+
+            // Register CreateMaterialTool
+            CreateMaterialTool createMaterialTool = new CreateMaterialTool();
+            _tools.Add(createMaterialTool.Name, createMaterialTool);
+
+            // Register DestroyComponentTool
+            DestroyComponentTool destroyComponentTool = new DestroyComponentTool();
+            _tools.Add(destroyComponentTool.Name, destroyComponentTool);
+
+            // Register SetGameObjectParentTool
+            SetGameObjectParentTool setGameObjectParentTool = new SetGameObjectParentTool();
+            _tools.Add(setGameObjectParentTool.Name, setGameObjectParentTool);
+
+            // Register CaptureScreenshotTool
+            CaptureScreenshotTool captureScreenshotTool = new CaptureScreenshotTool();
+            _tools.Add(captureScreenshotTool.Name, captureScreenshotTool);
         }
         
         /// <summary>
@@ -355,6 +387,10 @@ namespace McpUnity.Unity
             // Register GetEditorStateResource
             GetEditorStateResource getEditorStateResource = new GetEditorStateResource();
             _resources.Add(getEditorStateResource.Name, getEditorStateResource);
+
+            // Register GetComponentTypesResource
+            GetComponentTypesResource getComponentTypesResource = new GetComponentTypesResource();
+            _resources.Add(getComponentTypesResource.Name, getComponentTypesResource);
         }
         
         /// <summary>
