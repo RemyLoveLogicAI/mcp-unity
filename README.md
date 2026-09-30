@@ -85,7 +85,6 @@ The following tools are available for manipulating and querying Unity scenes and
 - `add_asset_to_scene`: Adds an asset from the AssetDatabase to the Unity scene
   > **Example prompt:** "Add the Player prefab from my project to the current scene"
 
-<<<<<<< HEAD
 - `create_scene`: Creates a new empty scene with default GameObjects and saves it to a given Assets path
   > **Example prompt:** "Create a new scene at Assets/Scenes/Level2.unity"
 - `open_scene`: Opens a scene by path, replacing or adding to the currently loaded scenes
