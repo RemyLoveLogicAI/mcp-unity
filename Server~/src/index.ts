@@ -12,7 +12,6 @@ import { registerGetConsoleLogsTool } from './tools/getConsoleLogsTool.js';
 import { registerUpdateComponentTool } from './tools/updateComponentTool.js';
 import { registerAddAssetToSceneTool } from './tools/addAssetToSceneTool.js';
 import { registerUpdateGameObjectTool } from './tools/updateGameObjectTool.js';
-<<<<<<< HEAD
 import { registerCreateSceneTool } from './tools/createSceneTool.js';
 import { registerOpenSceneTool } from './tools/openSceneTool.js';
 import { registerSaveSceneTool } from './tools/saveSceneTool.js';
@@ -22,13 +21,11 @@ import { registerReadScriptTool } from './tools/readScriptTool.js';
 import { registerCreateScriptTool } from './tools/createScriptTool.js';
 import { registerDeleteScriptTool } from './tools/deleteScriptTool.js';
 import { registerClearConsoleTool } from './tools/clearConsoleTool.js';
-=======
 import { registerCopyAssetTool } from './tools/copyAssetTool.js';
 import { registerMoveAssetTool } from './tools/moveAssetTool.js';
 import { registerDeleteAssetTool } from './tools/deleteAssetTool.js';
 import { registerCreateAssetFolderTool } from './tools/createAssetFolderTool.js';
 import { registerCreateMaterialTool } from './tools/createMaterialTool.js';
->>>>>>> 3c14e04 (feat: add asset management tools (copy/move/delete/create-folder/create-material))
 import { registerGetMenuItemsResource } from './resources/getMenuItemResource.js';
 import { registerGetConsoleLogsResource } from './resources/getConsoleLogsResource.js';
 import { registerGetHierarchyResource } from './resources/getScenesHierarchyResource.js';
@@ -73,7 +70,6 @@ registerGetConsoleLogsTool(server, mcpUnity, toolLogger);
 registerUpdateComponentTool(server, mcpUnity, toolLogger);
 registerAddAssetToSceneTool(server, mcpUnity, toolLogger);
 registerUpdateGameObjectTool(server, mcpUnity, toolLogger);
-<<<<<<< HEAD
 registerCreateSceneTool(server, mcpUnity, toolLogger);
 registerOpenSceneTool(server, mcpUnity, toolLogger);
 registerSaveSceneTool(server, mcpUnity, toolLogger);
@@ -83,13 +79,11 @@ registerReadScriptTool(server, mcpUnity, toolLogger);
 registerCreateScriptTool(server, mcpUnity, toolLogger);
 registerDeleteScriptTool(server, mcpUnity, toolLogger);
 registerClearConsoleTool(server, mcpUnity, toolLogger);
-=======
 registerCopyAssetTool(server, mcpUnity, toolLogger);
 registerMoveAssetTool(server, mcpUnity, toolLogger);
 registerDeleteAssetTool(server, mcpUnity, toolLogger);
 registerCreateAssetFolderTool(server, mcpUnity, toolLogger);
 registerCreateMaterialTool(server, mcpUnity, toolLogger);
->>>>>>> 3c14e04 (feat: add asset management tools (copy/move/delete/create-folder/create-material))
 
 // Register all resources into the MCP server
 registerGetTestsResource(server, mcpUnity, resourceLogger);
