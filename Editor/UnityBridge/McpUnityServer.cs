@@ -22,7 +22,12 @@ namespace McpUnity.Unity
     public class McpUnityServer : IDisposable
     {
         private static McpUnityServer _instance;
-        
+
+        // Persisted via SessionState (not a plain static field) because entering/exiting Play Mode can
+        // trigger a domain reload, which resets static fields before EnteredPlayMode/EnteredEditMode fires.
+        // SessionState survives a domain reload for the rest of the Editor session.
+        private const string WasListeningBeforePlayModeTransitionKey = "McpUnity.WasListeningBeforePlayModeTransition";
+
         private readonly Dictionary<string, McpToolBase> _tools = new Dictionary<string, McpToolBase>();
         private readonly Dictionary<string, McpResourceBase> _resources = new Dictionary<string, McpResourceBase>();
         
@@ -36,8 +41,25 @@ namespace McpUnity.Unity
         /// </summary>
         static McpUnityServer()
         {
+            // Subscribe these static-method handlers immediately, not deferred behind the delayCall below.
+            // [InitializeOnLoad] static constructors run synchronously as part of completing a domain
+            // reload, before Unity dispatches further engine events in the reloaded domain - so this
+            // guarantees the subscriptions are in place before EnteredPlayMode/EnteredEditMode can fire.
+            // The delayCall's lazy Instance access, by contrast, waits for a later editor update and could
+            // run after such an event already fired, missing it entirely (e.g. leaving a manually-started
+            // bridge, with AutoStartServer disabled, never restarted after a play-mode transition whose
+            // domain reload outraced the delayCall).
+            AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
+            AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
+
+            AssemblyReloadEvents.afterAssemblyReload -= OnAfterAssemblyReload;
+            AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
+
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+
             EditorApplication.delayCall += () => {
-                // Ensure Instance is created and hooks are set up after initial domain load
+                // Ensure Instance is created and remaining hooks are set up after initial domain load
                 var currentInstance = Instance;
             };
         }
@@ -75,14 +97,8 @@ namespace McpUnity.Unity
             EditorApplication.quitting -= OnEditorQuitting; // Prevent multiple subscriptions on domain reload
             EditorApplication.quitting += OnEditorQuitting;
 
-            AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
-            AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
-
-            AssemblyReloadEvents.afterAssemblyReload -= OnAfterAssemblyReload;
-            AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
-
-            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
-            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            // beforeAssemblyReload/afterAssemblyReload/playModeStateChanged are already subscribed in the
+            // static constructor above (see its comment for why), so they're not repeated here.
 
             InstallServer();
             InitializeServices();
@@ -285,6 +301,50 @@ namespace McpUnity.Unity
             // Register ClearConsoleTool
             ClearConsoleTool clearConsoleTool = new ClearConsoleTool(_consoleLogsService);
             _tools.Add(clearConsoleTool.Name, clearConsoleTool);
+
+            // Register DeleteGameObjectTool
+            DeleteGameObjectTool deleteGameObjectTool = new DeleteGameObjectTool();
+            _tools.Add(deleteGameObjectTool.Name, deleteGameObjectTool);
+
+            // Register DuplicateGameObjectTool
+            DuplicateGameObjectTool duplicateGameObjectTool = new DuplicateGameObjectTool();
+            _tools.Add(duplicateGameObjectTool.Name, duplicateGameObjectTool);
+
+            // Register SetEditorStateTool
+            SetEditorStateTool setEditorStateTool = new SetEditorStateTool();
+            _tools.Add(setEditorStateTool.Name, setEditorStateTool);
+
+            // Register CopyAssetTool
+            CopyAssetTool copyAssetTool = new CopyAssetTool();
+            _tools.Add(copyAssetTool.Name, copyAssetTool);
+
+            // Register MoveAssetTool
+            MoveAssetTool moveAssetTool = new MoveAssetTool();
+            _tools.Add(moveAssetTool.Name, moveAssetTool);
+
+            // Register DeleteAssetTool
+            DeleteAssetTool deleteAssetTool = new DeleteAssetTool();
+            _tools.Add(deleteAssetTool.Name, deleteAssetTool);
+
+            // Register CreateAssetFolderTool
+            CreateAssetFolderTool createAssetFolderTool = new CreateAssetFolderTool();
+            _tools.Add(createAssetFolderTool.Name, createAssetFolderTool);
+
+            // Register CreateMaterialTool
+            CreateMaterialTool createMaterialTool = new CreateMaterialTool();
+            _tools.Add(createMaterialTool.Name, createMaterialTool);
+
+            // Register DestroyComponentTool
+            DestroyComponentTool destroyComponentTool = new DestroyComponentTool();
+            _tools.Add(destroyComponentTool.Name, destroyComponentTool);
+
+            // Register SetGameObjectParentTool
+            SetGameObjectParentTool setGameObjectParentTool = new SetGameObjectParentTool();
+            _tools.Add(setGameObjectParentTool.Name, setGameObjectParentTool);
+
+            // Register CaptureScreenshotTool
+            CaptureScreenshotTool captureScreenshotTool = new CaptureScreenshotTool();
+            _tools.Add(captureScreenshotTool.Name, captureScreenshotTool);
         }
         
         /// <summary>
@@ -323,6 +383,13 @@ namespace McpUnity.Unity
             // Register GetOpenScenesResource
             GetOpenScenesResource getOpenScenesResource = new GetOpenScenesResource();
             _resources.Add(getOpenScenesResource.Name, getOpenScenesResource);
+            // Register GetEditorStateResource
+            GetEditorStateResource getEditorStateResource = new GetEditorStateResource();
+            _resources.Add(getEditorStateResource.Name, getEditorStateResource);
+
+            // Register GetComponentTypesResource
+            GetComponentTypesResource getComponentTypesResource = new GetComponentTypesResource();
+            _resources.Add(getComponentTypesResource.Name, getComponentTypesResource);
         }
         
         /// <summary>
@@ -373,7 +440,13 @@ namespace McpUnity.Unity
 
         /// <summary>
         /// Handles changes in Unity Editor's play mode state.
-        /// Stops the server when exiting Edit Mode if configured, and restarts it when entering Play Mode or returning to Edit Mode if auto-start is enabled.
+        /// Stops the server around each play/edit mode transition (a domain reload may occur as part of
+        /// that transition) and restarts it once the new mode is fully entered, so the bridge - including
+        /// tools like set_editor_state and the unity://editor-state resource - stays reachable while the
+        /// Editor is in Play Mode, not just in Edit Mode. Restarting is driven by AutoStartServer OR by
+        /// whether the server was actually listening right before the transition, so a server started
+        /// manually (with AutoStartServer disabled) comes back after the transition instead of staying
+        /// down for the rest of the session.
         /// </summary>
         /// <param name="state">The current play mode state change.</param>
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
@@ -381,19 +454,20 @@ namespace McpUnity.Unity
             switch (state)
             {
                 case PlayModeStateChange.ExitingEditMode:
-                    // About to enter Play Mode
+                case PlayModeStateChange.ExitingPlayMode:
+                    // About to transition play modes
+                    SessionState.SetBool(WasListeningBeforePlayModeTransitionKey, Instance.IsListening);
                     if (Instance.IsListening)
                     {
                         Instance.StopServer();
                     }
                     break;
                 case PlayModeStateChange.EnteredPlayMode:
-                case PlayModeStateChange.ExitingPlayMode:
-                    // Server is disabled during play mode as domain reload will be triggered again when stopped.
-                    break;
                 case PlayModeStateChange.EnteredEditMode:
-                    // Returned to Edit Mode
-                    if (!Instance.IsListening && McpUnitySettings.Instance.AutoStartServer)
+                    // Settled into the new mode (play or edit)
+                    if (!Instance.IsListening &&
+                        (McpUnitySettings.Instance.AutoStartServer ||
+                         SessionState.GetBool(WasListeningBeforePlayModeTransitionKey, false)))
                     {
                         Instance.StartServer();
                     }
