@@ -135,6 +135,12 @@ The following tools are available for manipulating and querying Unity scenes and
 - `capture_screenshot`: Captures a screenshot from the active Scene view camera, or from a specific or main scene camera, and returns it as an image
   > **Example prompt:** "Show me what the scene looks like right now"
 
+- `get_performance_stats`: Reads the most recently completed frame's timing, rendering, and memory performance metrics, to check whether a recent change caused a regression
+  > **Example prompt:** "Did that last change affect frame rate or draw calls?"
+
+- `find_missing_references`: Scans all loaded scenes for GameObjects with missing (deleted/renamed) script components, to catch silent breakage after a script or asset edit
+  > **Example prompt:** "Check if anything in the scene is broken after that script rename"
+
 - `delete_gameobject`: Deletes a GameObject (and its children) from the scene by path or instance ID
   > **Example prompt:** "Delete the OldEnemy GameObject from the scene"
 

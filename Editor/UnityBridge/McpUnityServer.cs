@@ -345,6 +345,14 @@ namespace McpUnity.Unity
             // Register CaptureScreenshotTool
             CaptureScreenshotTool captureScreenshotTool = new CaptureScreenshotTool();
             _tools.Add(captureScreenshotTool.Name, captureScreenshotTool);
+
+            // Register GetPerformanceStatsTool
+            GetPerformanceStatsTool getPerformanceStatsTool = new GetPerformanceStatsTool();
+            _tools.Add(getPerformanceStatsTool.Name, getPerformanceStatsTool);
+
+            // Register FindMissingReferencesTool
+            FindMissingReferencesTool findMissingReferencesTool = new FindMissingReferencesTool();
+            _tools.Add(findMissingReferencesTool.Name, findMissingReferencesTool);
         }
         
         /// <summary>
