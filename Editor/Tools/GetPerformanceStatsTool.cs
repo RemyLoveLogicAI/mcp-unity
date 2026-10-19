@@ -117,13 +117,46 @@ namespace McpUnity.Tools
             }
 
             _mainThreadTime = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Main Thread", 1);
-            _renderThreadTime = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Render Thread", 1);
+            // The exact name/category of the render-thread timing counter isn't consistently
+            // documented across Unity versions/platforms (it's been reported both as "Render
+            // Thread" and, on newer versions, as "CPU Render Thread Frame Time"; some platforms
+            // have no separate render thread at all). Try the known candidates and fall back to
+            // an invalid recorder (reported as null, not a misleading zero) if none are valid.
+            _renderThreadTime = StartFirstValidRecorder(
+                (ProfilerCategory.Internal, "CPU Render Thread Frame Time"),
+                (ProfilerCategory.Internal, "Render Thread")
+            );
             _gpuFrameTime = ProfilerRecorder.StartNew(ProfilerCategory.Render, "GPU Frame Time", 1);
             _drawCalls = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Draw Calls Count", 1);
             _setPassCalls = ProfilerRecorder.StartNew(ProfilerCategory.Render, "SetPass Calls Count", 1);
             _triangles = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Triangles Count", 1);
             _vertices = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Vertices Count", 1);
             _recordersStarted = true;
+        }
+
+        /// <summary>
+        /// Tries each (category, statName) candidate in order, keeping the first one that starts
+        /// a valid recorder and disposing the rest. Returns the last (invalid) attempt if none
+        /// of the candidates are valid on this Unity version/platform.
+        /// </summary>
+        private static ProfilerRecorder StartFirstValidRecorder(params (ProfilerCategory category, string statName)[] candidates)
+        {
+            ProfilerRecorder recorder = default;
+            for (int i = 0; i < candidates.Length; i++)
+            {
+                recorder = ProfilerRecorder.StartNew(candidates[i].category, candidates[i].statName, 1);
+                if (recorder.Valid)
+                {
+                    return recorder;
+                }
+
+                if (i < candidates.Length - 1)
+                {
+                    recorder.Dispose();
+                }
+            }
+
+            return recorder;
         }
 
         private static void DisposeRecorders()
