@@ -138,7 +138,7 @@ The following tools are available for manipulating and querying Unity scenes and
 - `get_performance_stats`: Reads recent frame timing and rendering metrics, plus current memory usage, to check whether a recent change caused a regression
   > **Example prompt:** "Did that last change affect frame rate or draw calls?"
 
-- `find_missing_references`: Scans all loaded scenes for GameObjects with missing (deleted/renamed) script components, to catch silent breakage after a script or asset edit
+- `find_missing_references`: Scans all loaded scenes, including inactive objects, for GameObjects with missing (deleted/renamed) script components. Does not check null serialized object-reference fields (e.g. an empty Material slot), and does not include Unity's special DontDestroyOnLoad scene
   > **Example prompt:** "Check if anything in the scene is broken after that script rename"
 
 - `delete_gameobject`: Deletes a GameObject (and its children) from the scene by path or instance ID
