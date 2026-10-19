@@ -7,10 +7,11 @@ using Newtonsoft.Json.Linq;
 namespace McpUnity.Tools
 {
     /// <summary>
-    /// Tool for reading the most recently completed frame's timing, rendering, and memory
-    /// performance metrics, to check whether a recent change caused a regression.
-    /// Keeps a small set of ProfilerRecorders running for the lifetime of the Editor session,
-    /// since a recorder only has data once at least one frame has elapsed since it started.
+    /// Tool for reading recent frame timing and rendering metrics, plus current memory usage, to
+    /// check whether a recent change caused a regression. Keeps a small set of ProfilerRecorders
+    /// running - restarted on Play Mode entry so stale Edit Mode samples aren't mistaken for a
+    /// completed game frame, since a recorder only has data once a frame has elapsed since it
+    /// (re)started.
     /// </summary>
     public class GetPerformanceStatsTool : McpToolBase
     {
