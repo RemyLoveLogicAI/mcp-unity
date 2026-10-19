@@ -28,6 +28,22 @@ namespace McpUnity.Tools
             // Dispose the recorders' native handles before a domain reload wipes the static
             // fields that reference them, otherwise each reload leaks the previous handles.
             AssemblyReloadEvents.beforeAssemblyReload += DisposeRecorders;
+
+            // Recorders keep sampling every Unity frame regardless of Play Mode, so if one was
+            // already running from prior Edit Mode activity, its Count is nonzero the instant
+            // Play Mode starts - a stale Edit Mode sample, not a completed game frame. Restarting
+            // on entry resets Count to 0 so hasFrameData only goes true once a real game frame
+            // has completed.
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+
+        private static void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.EnteredPlayMode)
+            {
+                DisposeRecorders();
+                EnsureRecordersStarted();
+            }
         }
 
         public GetPerformanceStatsTool()
