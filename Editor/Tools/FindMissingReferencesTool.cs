@@ -17,7 +17,10 @@ namespace McpUnity.Tools
             Description = "Scans all loaded scenes for GameObjects with missing (deleted/renamed) script " +
                 "components, to catch silent breakage after a script or asset edit. Does not check " +
                 "serialized object-reference fields (e.g. a null Material slot) - only missing script " +
-                "components themselves. Does not include Unity's special DontDestroyOnLoad scene";
+                "components themselves. Does not include Unity's special DontDestroyOnLoad scene. Each " +
+                "result includes both objectPath and instanceId - prefer instanceId when acting on a " +
+                "result, since objectPath can be ambiguous (and rejected by path-based tools) if sibling " +
+                "GameObjects share a name";
         }
 
         public override JObject Execute(JObject parameters)
