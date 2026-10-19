@@ -65,6 +65,7 @@ async function toolHandler(mcpUnity: McpUnity): Promise<CallToolResult> {
       text: JSON.stringify({
         message: response.message,
         isPlaying: response.isPlaying,
+        isPaused: response.isPaused,
         hasFrameData: response.hasFrameData,
         frameTiming: response.frameTiming,
         rendering: response.rendering,

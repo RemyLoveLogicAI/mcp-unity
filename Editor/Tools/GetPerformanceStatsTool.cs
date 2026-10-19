@@ -41,7 +41,11 @@ namespace McpUnity.Tools
         {
             EnsureRecordersStarted();
 
-            bool isPlaying = EditorApplication.isPlaying && !EditorApplication.isPaused;
+            // isPlaying stays true while paused - a paused Editor is still in Play Mode, and the
+            // recorders still hold the last completed game frame from before the pause, which is
+            // exactly what a caller pausing to inspect state wants back.
+            bool isPlaying = EditorApplication.isPlaying;
+            bool isPaused = EditorApplication.isPaused;
             bool hasFrameData = isPlaying && _mainThreadTime.Valid && _mainThreadTime.Count > 0;
 
             // Outside Play Mode, the recorders still hold editor-overhead samples (GUI repaints,
@@ -86,6 +90,12 @@ namespace McpUnity.Tools
                 message = "Started performance recorders - no frame has completed yet since they were " +
                     "created. Call this tool again after a moment in Play Mode to get frame timing data";
             }
+            else if (isPaused)
+            {
+                message = "Captured performance snapshot from the last completed frame before Play Mode " +
+                    "was paused. A null field means that counter isn't supported on this " +
+                    "platform/graphics backend";
+            }
             else
             {
                 message = "Captured performance snapshot from the most recently completed frame. " +
@@ -98,6 +108,7 @@ namespace McpUnity.Tools
                 ["type"] = "text",
                 ["message"] = message,
                 ["isPlaying"] = isPlaying,
+                ["isPaused"] = isPaused,
                 ["hasFrameData"] = hasFrameData,
                 ["frameTiming"] = frameTiming,
                 ["rendering"] = rendering,
