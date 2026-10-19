@@ -23,6 +23,13 @@ namespace McpUnity.Tools
         private static ProfilerRecorder _vertices;
         private static bool _recordersStarted;
 
+        static GetPerformanceStatsTool()
+        {
+            // Dispose the recorders' native handles before a domain reload wipes the static
+            // fields that reference them, otherwise each reload leaks the previous handles.
+            AssemblyReloadEvents.beforeAssemblyReload += DisposeRecorders;
+        }
+
         public GetPerformanceStatsTool()
         {
             Name = "get_performance_stats";
@@ -35,21 +42,27 @@ namespace McpUnity.Tools
             EnsureRecordersStarted();
 
             bool isPlaying = EditorApplication.isPlaying && !EditorApplication.isPaused;
-            bool hasFrameData = _mainThreadTime.Valid && _mainThreadTime.Count > 0;
+            bool hasFrameData = isPlaying && _mainThreadTime.Valid && _mainThreadTime.Count > 0;
 
+            // Outside Play Mode, the recorders still hold editor-overhead samples (GUI repaints,
+            // etc.) that aren't meaningful game performance data - report null rather than pass
+            // them through as if they were. Within a valid frame, each metric is also gated on
+            // its own recorder's validity (not every counter is supported on every
+            // platform/graphics backend), so a caller can tell "not measured" apart from a
+            // genuine zero instead of both reading as 0.
             JObject frameTiming = new JObject
             {
-                ["mainThreadMs"] = LastValueAsMs(_mainThreadTime),
-                ["renderThreadMs"] = LastValueAsMs(_renderThreadTime),
-                ["gpuMs"] = LastValueAsMs(_gpuFrameTime)
+                ["mainThreadMs"] = MsOrNull(_mainThreadTime, hasFrameData),
+                ["renderThreadMs"] = MsOrNull(_renderThreadTime, hasFrameData),
+                ["gpuMs"] = MsOrNull(_gpuFrameTime, hasFrameData)
             };
 
             JObject rendering = new JObject
             {
-                ["drawCalls"] = LastValue(_drawCalls),
-                ["setPassCalls"] = LastValue(_setPassCalls),
-                ["triangles"] = LastValue(_triangles),
-                ["vertices"] = LastValue(_vertices)
+                ["drawCalls"] = CountOrNull(_drawCalls, hasFrameData),
+                ["setPassCalls"] = CountOrNull(_setPassCalls, hasFrameData),
+                ["triangles"] = CountOrNull(_triangles, hasFrameData),
+                ["vertices"] = CountOrNull(_vertices, hasFrameData)
             };
 
             JObject memory = new JObject
@@ -65,7 +78,7 @@ namespace McpUnity.Tools
             if (!isPlaying)
             {
                 message = "Captured performance snapshot (not in Play Mode - frame timing and rendering " +
-                    "counters read as zero since nothing is rendering a game frame; memory counters are " +
+                    "counters are null since nothing is rendering a game frame; memory counters are " +
                     "still accurate)";
             }
             else if (!hasFrameData)
@@ -75,7 +88,8 @@ namespace McpUnity.Tools
             }
             else
             {
-                message = "Captured performance snapshot from the most recently completed frame";
+                message = "Captured performance snapshot from the most recently completed frame. " +
+                    "A null field means that counter isn't supported on this platform/graphics backend";
             }
 
             return new JObject
@@ -92,8 +106,8 @@ namespace McpUnity.Tools
         }
 
         /// <summary>
-        /// Starts the profiler recorders once per Editor session. They're intentionally never
-        /// disposed so later calls can read data from frames that elapsed between calls.
+        /// Starts the profiler recorders once per Editor session. Disposed via
+        /// AssemblyReloadEvents.beforeAssemblyReload and restarted lazily on the next call.
         /// </summary>
         private static void EnsureRecordersStarted()
         {
@@ -103,7 +117,7 @@ namespace McpUnity.Tools
             }
 
             _mainThreadTime = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Main Thread", 1);
-            _renderThreadTime = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Render Thread", 1);
+            _renderThreadTime = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Render Thread", 1);
             _gpuFrameTime = ProfilerRecorder.StartNew(ProfilerCategory.Render, "GPU Frame Time", 1);
             _drawCalls = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Draw Calls Count", 1);
             _setPassCalls = ProfilerRecorder.StartNew(ProfilerCategory.Render, "SetPass Calls Count", 1);
@@ -112,22 +126,41 @@ namespace McpUnity.Tools
             _recordersStarted = true;
         }
 
+        private static void DisposeRecorders()
+        {
+            if (!_recordersStarted)
+            {
+                return;
+            }
+
+            _mainThreadTime.Dispose();
+            _renderThreadTime.Dispose();
+            _gpuFrameTime.Dispose();
+            _drawCalls.Dispose();
+            _setPassCalls.Dispose();
+            _triangles.Dispose();
+            _vertices.Dispose();
+            _recordersStarted = false;
+        }
+
         /// <summary>
         /// Reads the last sample from a nanosecond-based timing recorder, as milliseconds.
-        /// Returns 0 if the recorder isn't valid or has no data yet.
+        /// Returns null (not 0) if there's no frame to read yet or the recorder isn't valid -
+        /// e.g. that counter isn't supported on this platform/graphics backend.
         /// </summary>
-        private static double LastValueAsMs(ProfilerRecorder recorder)
+        private static double? MsOrNull(ProfilerRecorder recorder, bool hasFrameData)
         {
-            return recorder.Valid ? recorder.LastValue / 1_000_000.0 : 0;
+            return hasFrameData && recorder.Valid ? recorder.LastValue / 1_000_000.0 : (double?)null;
         }
 
         /// <summary>
         /// Reads the last sample from a plain-count recorder.
-        /// Returns 0 if the recorder isn't valid or has no data yet.
+        /// Returns null (not 0) if there's no frame to read yet or the recorder isn't valid -
+        /// e.g. that counter isn't supported on this platform/graphics backend.
         /// </summary>
-        private static long LastValue(ProfilerRecorder recorder)
+        private static long? CountOrNull(ProfilerRecorder recorder, bool hasFrameData)
         {
-            return recorder.Valid ? recorder.LastValue : 0;
+            return hasFrameData && recorder.Valid ? recorder.LastValue : (long?)null;
         }
 
         private static double BytesToMB(long bytes)
