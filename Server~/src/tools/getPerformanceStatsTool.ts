@@ -6,8 +6,8 @@ import { McpUnityError, ErrorType } from '../utils/errors.js';
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 const toolName = 'get_performance_stats';
-const toolDescription = "Reads the most recently completed frame's timing, rendering, and memory " +
-  'performance metrics, to check whether a recent change caused a regression';
+const toolDescription = 'Reads recent frame timing and rendering metrics, plus current memory usage, ' +
+  'to check whether a recent change caused a regression';
 const paramsSchema = z.object({});
 
 /**

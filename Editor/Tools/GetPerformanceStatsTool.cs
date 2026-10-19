@@ -33,8 +33,8 @@ namespace McpUnity.Tools
         public GetPerformanceStatsTool()
         {
             Name = "get_performance_stats";
-            Description = "Reads the most recently completed frame's timing, rendering, and memory " +
-                "performance metrics, to check whether a recent change caused a regression";
+            Description = "Reads recent frame timing and rendering metrics, plus current memory usage, " +
+                "to check whether a recent change caused a regression";
         }
 
         public override JObject Execute(JObject parameters)
